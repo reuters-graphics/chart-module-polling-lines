@@ -1,0 +1,44 @@
+@import '~@reuters-graphics/style-theme-eisbaer/scss/main';
+@import '~@reuters-graphics/style-color/scss/thematic/brand';
+@import '~@reuters-graphics/style-color/scss/all';
+
+$LineChart-container: '#polls-line-chart-container' !default;
+
+#{$LineChart-container} {
+  /* Write your chart styles here */
+  .axis {
+    pointer-events: none;
+    text {
+      font-family: $font-family-sans-serif;
+      fill: $gray-400;
+      font-size: 0.875rem;
+    }
+
+    line,
+    path {
+      stroke: $gray-600;
+      stroke-width: 1px;
+    }
+
+    path.domain {
+      display: none;
+    }
+  }
+
+  g.line-group {
+    path {
+      fill: none;
+      stroke-width: 2;
+    }
+
+    &.total-approve path {
+      stroke: $green-400;
+    }
+
+    &.total-disapprove path {
+      stroke: $orange-400;
+    }
+
+  }
+
+}
