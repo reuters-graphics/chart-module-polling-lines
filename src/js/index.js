@@ -1,7 +1,11 @@
 import * as d3 from 'd3';
-import { appendSelect } from 'd3-appendselect';
+import {
+  appendSelect
+} from 'd3-appendselect';
 import merge from 'lodash/merge';
 import * as utils from './utils';
+import D3Locale from '@reuters-graphics/d3-locale';
+
 
 d3.selection.prototype.appendSelect = appendSelect;
 
@@ -11,6 +15,7 @@ d3.selection.prototype.appendSelect = appendSelect;
  * see and customize in the baseClasses folder.
  */
 class MyChartModule {
+
   selection(selector) {
     if (!selector) return this._selection;
     this._selection = d3.select(selector);
@@ -38,8 +43,7 @@ class MyChartModule {
       right: 100,
       bottom: 50,
       left: 60,
-    },
-    lineVars: ['Total approve', 'Total disapprove'],
+    }
   };
 
   /**
@@ -50,10 +54,22 @@ class MyChartModule {
     const data = this.data(); // Data passed to your chart
     const props = this.props(); // Props passed to your chart
 
-    const { margin } = props;
+    let lang = props.locale ? props.locale : 'en';
+    const locale = new D3Locale(props.locale);
+    
+    if (lang == 'en') {
+      locale.apStyle();
+    }
+
+  
+    const {
+      margin
+    } = props;
 
     const container = this.selection().node();
-    const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
+    const {
+      width: containerWidth
+    } = container.getBoundingClientRect(); // Respect the width of your container!
 
     const width = containerWidth - margin.left - margin.right;
     const height =
@@ -63,8 +79,10 @@ class MyChartModule {
 
     let lineSeries = props.lineVars.map((v) => {
       return {
-        id: v,
-        values: data[v],
+        id: v.key,
+        display: v.display,
+        hex: v.hex,
+        values: data[v.key],
       };
     });
 
@@ -79,13 +97,14 @@ class MyChartModule {
 
     let sampleSize = data['Total - Unweighted Count'];
 
-    console.log(sampleSize);
-
     const xScale = d3.scaleTime().domain(xDom).range([0, width]);
 
     const yScale = d3.scaleLinear().domain(yDom).range([height, 0]);
 
-    const xAxis = d3.axisBottom(xScale).tickSize(20).ticks(3);
+    const xAxis = d3.axisBottom(xScale)
+      .tickSize(20)
+      .ticks(3)
+      .tickFormat(d=> locale.formatTime('%b')(d));
 
     const yAxis = d3
       .axisLeft(yScale)
@@ -156,9 +175,13 @@ class MyChartModule {
         .append('g')
         .attr('class', (d) => `line-group ${utils.slugify(d.id)}`);
 
-      lineGroup.appendSelect('path.moe').attr('d', (d) => makeArea(d.values));
+      lineGroup.appendSelect('path.moe')
+        .attr('d', (d) => makeArea(d.values))
+        .style('fill', d => d.hex);
 
-      lineGroup.appendSelect('path.line').attr('d', (d) => makeLine(d.values));
+      lineGroup.appendSelect('path.line')
+        .attr('d', (d) => makeLine(d.values))
+        .style('stroke', d => d.hex);
 
       let labelGroup = lineGroup
         .appendSelect('g.lbl-group')
@@ -170,19 +193,19 @@ class MyChartModule {
         });
 
       labelGroup.appendSelect('text.lbl-cat.bkgd');
-      labelGroup.appendSelect('text.lbl-cat.fore');
+      labelGroup.appendSelect('text.lbl-cat.fore').style('fill', d => d.hex);
 
       labelGroup.appendSelect('text.lbl-val.bkgd');
-      labelGroup.appendSelect('text.lbl-val.fore');
+      labelGroup.appendSelect('text.lbl-val.fore').style('fill', d => d.hex);
 
       labelGroup.selectAll('text.lbl-cat').text((d) => {
-        return utils.toTitleCase(d.id.replace('Total', ''));
+        return d.display;
       });
 
       labelGroup
         .selectAll('text.lbl-val')
-        .text((d) => `${utils.round(d.values[d.values.length - 1], 1)}%`)
-        .attr('y', -20);
+        .text((d) => locale.format(".1%")(d.values[d.values.length - 1] / 100))
+        .attr('y', -15);
     }
 
     function onUpdate(update) {
@@ -208,11 +231,11 @@ class MyChartModule {
 
       update
         .select('g.lbl-group text.lbl-val.fore')
-        .text((d) => `${utils.round(d.values[d.values.length - 1], 1)}%`);
+        .text((d) => locale.format(".1%")(d.values[d.values.length - 1] / 100));
 
       update
         .select('g.lbl-group text.lbl-val.bkgd')
-        .text((d) => `${utils.round(d.values[d.values.length - 1], 1)}%`);
+        .text((d) => locale.format(".1%")(d.values[d.values.length - 1] / 100));
     }
 
     function onExit(exit) {

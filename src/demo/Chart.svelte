@@ -20,14 +20,25 @@ Follow the notes below! -->
 
   // ...
 
+
+
+
   // 🎈 Tie your custom props back together into one chartProps object.
   $: chartProps = {
     dates: testData.dates,
-    lineVars: ['Total approve', 'Total disapprove'],
+    lineVars: [{
+        key: 'Total approve',
+        display: 'Approve',
+        hex: '#31a354'
+      },
+      {
+        key: 'Total disapprove',
+        display: 'Disapprove',
+        hex: '#e6550d'
+    }],
     selected: defaultKey,
-  };
-
-  console.log(testData);
+    lang: 'en',
+    };
 
   afterUpdate(() => {
     console.log('afterUpdate');

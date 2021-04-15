@@ -41,7 +41,17 @@ $LineChart-container: '#polls-line-chart-container' !default;
         stroke-width: 4px;
         stroke-linecap: round;
         stroke-linejoin: round;
+        display: none;
       }
+    }
+
+    text.lbl-val {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    text.lbl-cat {
+      font-size: .875rem;
     }
 
     path.line {
@@ -54,31 +64,31 @@ $LineChart-container: '#polls-line-chart-container' !default;
     }
 
     &.total-approve {
-      path.moe {
-        fill: $green-400;
-      }
+      // path.moe {
+      //   fill: $green-400;
+      // }
 
-      path.line {
-        stroke: $green-400;
-      }
+      // path.line {
+      //   stroke: $green-400;
+      // }
 
-      text.fore {
-        fill: $green-400;
-      }
+      // text.fore {
+      //   fill: $green-400;
+      // }
     }
 
     &.total-disapprove {
-      path.moe {
-        fill: $orange-400;
-      }
+      // path.moe {
+      //   fill: $orange-400;
+      // }
 
-      path.line {
-        stroke: $orange-400;
-      }
+      // path.line {
+      //   stroke: $orange-400;
+      // }
 
-      text.fore {
-        fill: $orange-400;
-      }
+      // text.fore {
+      //   fill: $orange-400;
+      // }
     }
   }
 }

@@ -1,3 +1,5 @@
+import {formatLocale} from 'd3-format';
+
 export function slugify(text) {
   return text
     .toString()
@@ -19,3 +21,7 @@ export function toTitleCase(str) {
 export function round(value, decimals) {
   return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 }
+
+export const locale_US = formatLocale({
+  "shortMonths": ["Jan.", "Feb.", "March", "April", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]
+});
