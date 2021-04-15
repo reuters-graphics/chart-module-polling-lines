@@ -30,7 +30,7 @@ module.exports = {
   },
   buildOptions: {
     out: 'docs',
-    baseUrl: '/chart-module-polls-line-chart/',
+    baseUrl: '/chart-module-polling-lines/',
   },
   optimize: {
     bundle: true,
