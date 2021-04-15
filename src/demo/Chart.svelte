@@ -16,9 +16,6 @@ Follow the notes below! -->
   // to update in the demo. (And write buttons to update them below!)
   let defaultKey = 'Respondents:AllRespondents'
   let dropDownArray = setDropdownData();
-
-  console.log(dropDownArray);
-
   let chartData = testData.demographics[defaultKey]; 
 
   // ...

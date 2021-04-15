@@ -37,9 +37,9 @@ class MyChartModule {
     aspectHeight: 0.7,
     margin: {
       top: 20,
-      right: 20,
-      bottom: 25,
-      left: 30,
+      right: 100,
+      bottom: 50,
+      left: 60,
     },
     lineVars: ['Total approve', 'Total disapprove']
   };
@@ -66,10 +66,6 @@ class MyChartModule {
 
     const parseDate = d3.timeParse("%Y-%m-%d")
 
-    let start = props.dates[0].split(" - ")[1];
-    let end = props.dates[props.dates.length - 1].split(" - ")[1];
-    let xDom = [parseDate(start), parseDate(end)]
-
     let lineSeries = props.lineVars.map(v => {
       return {
         id: v,
@@ -77,22 +73,58 @@ class MyChartModule {
       }
     })
 
+    lineSeries = lineSeries.filter(d => {
+      return d3.sum(d.values) > 0;
+    })
+
+    let startDate = props.dates[0].split(" - ")[1];
+    let endDate = props.dates[props.dates.length - 1].split(" - ")[1];
+    let xDom = [parseDate(startDate), parseDate(endDate)];
+    let yDom = [0, 100];
+
+    let sampleSize = data['Total - Unweighted Count'];
+
     const xScale = d3.scaleTime()
       .domain(xDom)
       .range([0, width]);
 
     const yScale = d3.scaleLinear()
-      .domain([0, 100])
+      .domain(yDom)
       .range([height, 0]);
+
+    const xAxis = d3.axisBottom(xScale)
+      .tickSize(20)
+      .ticks(3);
+
+    const yAxis = d3.axisLeft(yScale)
+      .ticks(5)
+      .tickValues([0, 25, 50, 75, 100])
+      .tickSize(-20 - width)
+      .tickFormat(d => `${d}%`);
 
     const makeLine = d3
       .line()
-      .x((d,i) => {
+      .x((d, i) => {
         let dateStr = props.dates[i].split(' - ')[1];
         let dateVal = parseDate(dateStr);
         return xScale(dateVal);
       })
-      .y(d=> yScale(d))
+      .y(d => yScale(d));
+
+    const makeArea = d3.area()
+      .x((d, i) => {
+        let dateStr = props.dates[i].split(' - ')[1];
+        let dateVal = parseDate(dateStr);
+        return xScale(dateVal);
+      })
+      .y0((d, i) => {
+        let moe = Math.sqrt(1.3 / sampleSize[i]) * 100;
+        return yScale(d) + moe;
+      })
+      .y1((d, i) => {
+        let moe = Math.sqrt(1.3 / sampleSize[i]) * 100;
+        return yScale(d) - moe;
+      });
 
     const plot = this.selection()
       .appendSelect('svg') // 👈 Use appendSelect instead of append for non-data-bound elements!
@@ -101,24 +133,95 @@ class MyChartModule {
       .appendSelect('g.plot')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    const transition = plot.transition().duration(500);
+
     plot
       .appendSelect('g.axis.x')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(xScale));
+      .call(xAxis)
 
     plot
       .appendSelect('g.axis.y')
-      .call(d3.axisLeft(yScale));
+      .attr('transform', `translate(-20,0)`)
+      .call(yAxis)
+      .selectAll('g.tick')
+      .classed('mid', d => d === 50);
 
     let lineGroup = plot.selectAll('g.line-group')
-      .data(lineSeries)
-      .join('g')
-      .attr('class', d => `line-group ${utils.slugify(d.id)}`)
+      .data(lineSeries, d => {
+        return d.id;
+      })
+      .join(
+        enter => onEnter(enter),
+        update => onUpdate(update),
+        exit => onExit(exit)
+      )
 
-    lineGroup.appendSelect('path')
-      .attr('d', d => makeLine(d.values))
+    function onEnter(enter) {
+      let lineGroup = enter.append('g')
+        .attr('class', d => `line-group ${utils.slugify(d.id)}`);
 
-    const transition = plot.transition().duration(500);
+      lineGroup.appendSelect('path.moe')
+        .attr('d', d => makeArea(d.values))
+
+      lineGroup.appendSelect('path.line')
+        .attr('d', d => makeLine(d.values))
+
+      let labelGroup = lineGroup.appendSelect('g.lbl-group')
+        .attr('transform', d => {
+          let dateVal = parseDate(endDate);
+          let xPos = xScale(dateVal) + 5;
+          let yPos = yScale(d.values[d.values.length - 1]) + 5;
+          return `translate(${xPos},${yPos})`;
+        })
+
+      labelGroup.appendSelect('text.lbl-cat.bkgd');
+      labelGroup.appendSelect('text.lbl-cat.fore');
+
+      labelGroup.appendSelect('text.lbl-val.bkgd');
+      labelGroup.appendSelect('text.lbl-val.fore');
+
+      labelGroup.selectAll('text.lbl-cat')
+        .text(d => {
+          return utils.toTitleCase(d.id.replace('Total', ''));
+        });
+
+      labelGroup.selectAll('text.lbl-val')
+        .text(d => `${utils.round(d.values[d.values.length-1], 1)}%`)
+        .attr('y', -20)
+
+    }
+
+    function onUpdate(update) {
+
+      update.select('path.moe')
+        .transition(transition)
+        .attr('d', d => makeArea(d.values))
+
+      update.select('path.line')
+        .transition(transition)
+        .attr('d', d => makeLine(d.values))
+
+      let labelGroup = update.select('g.lbl-group')
+        .transition(transition)
+        .attr('transform', d => {
+          let dateVal = parseDate(endDate);
+          let xPos = xScale(dateVal) + 5;
+          let yPos = yScale(d.values[d.values.length - 1]) + 5;
+          return `translate(${xPos},${yPos})`;
+        })
+
+      update.select('g.lbl-group text.lbl-val.fore')
+        .text(d => `${utils.round(d.values[d.values.length-1], 1)}%`);
+
+      update.select('g.lbl-group text.lbl-val.bkgd')
+        .text(d => `${utils.round(d.values[d.values.length-1], 1)}%`)
+
+    }
+
+    function onExit(exit) {
+      exit.transition(transition).style('opacity', 0).remove();
+    }
 
     return this; // Generally, always return the chart class from draw!
   }

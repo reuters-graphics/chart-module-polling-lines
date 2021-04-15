@@ -5,38 +5,85 @@
 $LineChart-container: '#polls-line-chart-container' !default;
 
 #{$LineChart-container} {
+
   /* Write your chart styles here */
   .axis {
     pointer-events: none;
+
     text {
       font-family: $font-family-sans-serif;
       fill: $gray-400;
       font-size: 0.875rem;
     }
 
-    line,
-    path {
-      stroke: $gray-600;
-      stroke-width: 1px;
+    .tick {
+      line,
+      path {
+        stroke: $gray-200;
+        stroke-width: 1px;
+      }
+
+      &.mid line,path{
+        stroke: $gray-300;
+      }
     }
+    
 
     path.domain {
       display: none;
     }
+
+    
   }
 
   g.line-group {
-    path {
+
+    text {
+
+      &.bkgd {
+        paint-order: stroke;
+        stroke: white;
+        stroke-width: 4px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    }
+
+    path.line {
       fill: none;
       stroke-width: 2;
     }
 
-    &.total-approve path {
-      stroke: $green-400;
+    path.moe {
+      opacity: .1;
     }
 
-    &.total-disapprove path {
-      stroke: $orange-400;
+    &.total-approve {
+      path.moe {
+        fill: $green-400;
+      }
+
+      path.line {
+        stroke: $green-400;
+      }
+
+      text.fore {
+        fill: $green-400;
+      }
+    }
+
+    &.total-disapprove {
+      path.moe {
+        fill: $orange-400;
+      }
+
+      path.line {
+        stroke: $orange-400;
+      }
+
+      text.fore {
+        fill: $orange-400;
+      }
     }
 
   }
