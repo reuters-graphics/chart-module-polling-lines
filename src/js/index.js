@@ -79,7 +79,7 @@ class MyChartModule {
 
     let sampleSize = data['Total - Unweighted Count'];
 
-    console.log(sampleSize)
+    console.log(sampleSize);
 
     const xScale = d3.scaleTime().domain(xDom).range([0, width]);
 

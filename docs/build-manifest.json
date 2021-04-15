@@ -213,7 +213,7 @@
       "imports": []
     },
     "dist/js/index.js": {
-      "bytes": 6421,
+      "bytes": 6451,
       "imports": [
         {
           "path": "_snowpack/pkg/d3.js",
@@ -394,7 +394,7 @@
           "bytesInOutput": 324
         },
         "dist/js/index.js": {
-          "bytesInOutput": 2963
+          "bytesInOutput": 2982
         },
         "dist/js/test-data.json.proxy.js": {
           "bytesInOutput": 17876
@@ -409,7 +409,7 @@
           "bytesInOutput": 44
         }
       },
-      "bytes": 1295852
+      "bytes": 1295871
     },
     "../~~bundle~~/dist/demo/App/index.css": {
       "imports": [],

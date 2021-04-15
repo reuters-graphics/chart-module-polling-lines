@@ -144,6 +144,7 @@ var MyChartModule = /*#__PURE__*/function () {
       var xDom = [parseDate(startDate), parseDate(endDate)];
       var yDom = [0, 100];
       var sampleSize = data['Total - Unweighted Count'];
+      console.log(sampleSize);
       var xScale = d3.scaleTime().domain(xDom).range([0, width]);
       var yScale = d3.scaleLinear().domain(yDom).range([height, 0]);
       var xAxis = d3.axisBottom(xScale).tickSize(20).ticks(3);
