@@ -14,9 +14,9 @@ Follow the notes below! -->
 
   // 🎚️ Create variables for any data or props you want users to be able
   // to update in the demo. (And write buttons to update them below!)
-  let defaultKey = 'Respondents:AllRespondents'
+  let defaultKey = 'Respondents:AllRespondents';
   let dropDownArray = setDropdownData();
-  let chartData = testData.demographics[defaultKey]; 
+  let chartData = testData.demographics[defaultKey];
 
   // ...
 
@@ -24,53 +24,69 @@ Follow the notes below! -->
   $: chartProps = {
     dates: testData.dates,
     lineVars: ['Total approve', 'Total disapprove'],
-    selected: defaultKey
+    selected: defaultKey,
   };
 
-  console.log(testData)
+  console.log(testData);
 
   afterUpdate(() => {
-
-    console.log('afterUpdate')
+    console.log('afterUpdate');
 
     // 💪 Create a new chart instance of your module.
     chart = new LineChart();
-    
+
     // ⚡ And let's use your chart!
     chart
       .selection(chartContainer)
       .data(chartData) // Pass your chartData
       .props(chartProps) // Pass your chartProps
       .draw(); // 🚀 DRAW IT!
-
   });
 
-  
   function setDropdownData() {
-    
     let map = {};
 
-    Object.keys(testData.demographics).forEach(d=> {
-      let parent = d.split(":")[0];
-      let child = d.split(":")[1];
+    Object.keys(testData.demographics).forEach((d) => {
+      let parent = d.split(':')[0];
+      let child = d.split(':')[1];
 
-      map[parent] = map[parent] ? map[parent] : {id: parent, values: []};
+      map[parent] = map[parent] ? map[parent] : { id: parent, values: [] };
       map[parent].values.push(child);
-
     });
 
     return Object.values(map);
-
   }
 
   function getVal() {
-    chartProps.selected = document.getElementById("dropdown").value;
+    chartProps.selected = document.getElementById('dropdown').value;
     chartData = testData.demographics[chartProps.selected];
   }
-
-  
-
 </script>
+
+<div id="polls-line-chart-container" bind:this={chartContainer} />
+
+<div class="chart-options">
+  <!-- svelte-ignore a11y-no-onchange -->
+  <select
+    bind:value={chartProps.selected}
+    name="dropdown"
+    id="dropdown"
+    on:change={() => getVal()}
+  >
+    {#each dropDownArray as demo}
+      <optgroup label={demo.id}>
+        {#each demo.values as demoVal}
+          <option value="{demo.id}:{demoVal}">{demoVal}</option>
+        {/each}
+      </optgroup>
+    {/each}
+  </select>
+</div>
+
+<!-- ⚙️ These components will automatically create interactive documentation for you chart! -->
+<Docs />
+<Explorer title="Data" data={chart.data()} />
+<Explorer title="Props" data={chart.props()} />
 
 <!-- 🖌️ Style your demo page here -->
 <style lang="scss">
@@ -80,26 +96,3 @@ Follow the notes below! -->
     }
   }
 </style>
-
-<div id="polls-line-chart-container" bind:this={chartContainer} />
-
-<div class="chart-options">
-
-  <!-- svelte-ignore a11y-no-onchange -->
-  <select bind:value={chartProps.selected} name="dropdown" id="dropdown" on:change={()=> getVal()}>
-    
-    {#each dropDownArray as demo}
-      <optgroup label="{demo.id}">
-        {#each demo.values as demoVal}
-          <option value="{demo.id}:{demoVal}">{demoVal}</option>
-        {/each}
-      </optgroup>
-    {/each}
-
-  </select>
-</div>
-
-<!-- ⚙️ These components will automatically create interactive documentation for you chart! -->
-<Docs />
-<Explorer title='Data' data={chart.data()} />
-<Explorer title='Props' data={chart.props()} />
