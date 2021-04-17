@@ -5,6 +5,7 @@
 $LineChart-container: '#polls-line-chart-container' !default;
 
 #{$LineChart-container} {
+
   /* Write your chart styles here */
   .axis {
     pointer-events: none;
@@ -16,6 +17,8 @@ $LineChart-container: '#polls-line-chart-container' !default;
     }
 
     .tick {
+
+      
       line,
       path {
         stroke: $gray-200;
@@ -33,16 +36,22 @@ $LineChart-container: '#polls-line-chart-container' !default;
     }
   }
 
+  text.bkgd {
+    paint-order: stroke;
+    stroke: white;
+    stroke-width: 4px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   g.line-group {
-    text {
-      &.bkgd {
-        paint-order: stroke;
-        stroke: white;
-        stroke-width: 4px;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        display: none;
-      }
+
+    .lbl-group {
+      display: none;
+
+      &.active {
+        display: block;
+      };
     }
 
     text.lbl-val {
@@ -91,4 +100,35 @@ $LineChart-container: '#polls-line-chart-container' !default;
       // }
     }
   }
+
+
+  .x.axis .tick {
+    display: none;
+
+    &.active {
+      display: block;
+    }
+  }
+
+
+  g.tt {
+    display: none;
+    pointer-events: none;
+    
+    &.active {
+      display: block;
+    };
+    
+    circle {
+      stroke: white;
+      stroke-width: 2;
+    }
+
+    text {
+      text-anchor: middle;
+    }
+
+  }
+
+
 }
