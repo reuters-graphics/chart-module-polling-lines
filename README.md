@@ -2,7 +2,7 @@
 
 # LineChart
 
-See the [demo page](https://reuters-graphics.github.io/chart-module-polls-line-chart/).
+See the [demo page](https://reuters-graphics.github.io/chart-module-polling-lines/).
 
 ### Install
 
