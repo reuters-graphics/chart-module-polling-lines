@@ -18,7 +18,7 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
 
 ## Polling chart configuration options:
 
-`dates`: (array) The top-level unformatted dates array from the data. (Ex: data.dates). Used to define xScale domain.
+`dates`: (array) The top-level unformatted dates array from the data. (Ex: data.dates). Used to define xScale domain
 `lineVars` : (Object array) Variables for which we want to draw lines.
 
   * `key` : (String) Keys for series we wish to plot. `Total approve` or `Total disapprove`
