@@ -32,9 +32,19 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
 
 Example configuration: 
 
+
 ```javascript
   $: chartProps = {
-    dates: testData.dates,
+    dates: [
+      "2021-01-20 - 2021-01-21",
+      "2021-02-02 - 2021-02-03",
+      "2021-02-09 - 2021-02-10",
+      "2021-02-17 - 2021-02-18",
+      "2021-02-24 - 2021-02-25",
+      "2021-03-03 - 2021-03-04",
+      "2021-03-10 - 2021-03-11",
+      "2021-03-17 - 2021-03-18"
+    ],
     lineVars: [{
         key: 'Total approve',
         display: {

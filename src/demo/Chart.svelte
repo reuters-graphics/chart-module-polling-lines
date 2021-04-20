@@ -21,7 +21,7 @@ Follow the notes below! -->
   // ...
 
 
-
+console.log(JSON.stringify(testData.dates))
 
   // 🎈 Tie your custom props back together into one chartProps object.
   $: chartProps = {
