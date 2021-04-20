@@ -14,6 +14,7 @@ $ yarn add https://github.com/reuters-graphics/chart-module-polls-line-chart.git
 
 ```javascript
 import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
+```
 
 ## Polling chart configuration options:
 
@@ -27,7 +28,7 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
 
 Example configuration: 
 
-```
+```javascript
   $: chartProps = {
     dates: testData.dates,
     lineVars: [{
