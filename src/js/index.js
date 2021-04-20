@@ -1,12 +1,18 @@
 import * as d3 from 'd3';
 
-import { voronoi } from 'd3-voronoi';
+import {
+  voronoi
+} from 'd3-voronoi';
 
-import { appendSelect } from 'd3-appendselect';
+import {
+  appendSelect
+} from 'd3-appendselect';
 import merge from 'lodash/merge';
 import * as utils from './utils';
 import D3Locale from '@reuters-graphics/d3-locale';
-import { polygonLength } from 'd3';
+import {
+  polygonLength
+} from 'd3';
 
 d3.selection.prototype.appendSelect = appendSelect;
 
@@ -32,6 +38,13 @@ class MyChartModule {
     if (!newProps) return this._props || this.defaultProps;
     this._props = merge(this._props || this.defaultProps, newProps);
     return this;
+  }
+
+  checkLabelOverlap(val1, val2) {
+
+    let order = [val1, val2].sort((a, b) => a - b);
+    console.log('order:', order);
+
   }
 
   defaultData = [];
@@ -61,10 +74,14 @@ class MyChartModule {
       locale.apStyle();
     }
 
-    const { margin } = props;
+    const {
+      margin
+    } = props;
 
     const container = this.selection().node();
-    const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
+    const {
+      width: containerWidth
+    } = container.getBoundingClientRect(); // Respect the width of your container!
 
     const width = containerWidth - margin.left - margin.right;
     const height =
@@ -72,15 +89,20 @@ class MyChartModule {
 
     const parseDate = d3.timeParse('%Y-%m-%d');
 
+    console.log(lang)
+
     let lineSeries = props.lineVars.map((v) => {
       return {
         id: v.key,
-        display: v.display,
+        display: v.display[lang] ? v.display[lang] : v.display['en'],
         hex: v.hex,
         values: data[v.key],
       };
     });
 
+
+
+    
     lineSeries = lineSeries.filter((d) => {
       return d3.sum(d.values) > 0;
     });
@@ -108,7 +130,7 @@ class MyChartModule {
       .ticks(5)
       .tickValues([0, 25, 50, 75, 100])
       .tickSize(-20 - width)
-      .tickFormat((d) => `${d}%`);
+      .tickFormat((d) => `${d}%`)
 
     const makeLine = d3
       .line()
@@ -309,7 +331,7 @@ class MyChartModule {
       .text((d) => locale.format('.1%')(d.val / 100));
 
     vPaths
-      .filter((d) => {
+      .filter(d => {
         return d.data.dateStr !== endDate;
       })
       .on('mouseover', (event, d) => {

@@ -28,12 +28,18 @@ Follow the notes below! -->
     dates: testData.dates,
     lineVars: [{
         key: 'Total approve',
-        display: 'Approve',
+        display: {
+          'en' : 'Approve',
+          'de' : 'Zustimmung'
+        },
         hex: '#31a354'
       },
       {
         key: 'Total disapprove',
-        display: 'Disapprove',
+        display: {
+          'en' : 'Disapprove',
+          'de' : 'Missbilligung'
+        },
         hex: '#e6550d'
     }],
     selected: defaultKey,
