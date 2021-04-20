@@ -1,7 +1,7 @@
 {
   "inputs": {
     "dist/scss/demo.css": {
-      "bytes": 310018,
+      "bytes": 310313,
       "imports": []
     },
     "dist/demo/App/App.svelte.css": {
@@ -191,8 +191,42 @@
         }
       ]
     },
+    "_snowpack/pkg/common/locale-27ba713c.js": {
+      "bytes": 11030,
+      "imports": []
+    },
+    "_snowpack/pkg/common/isoParse-ea4cc06e.js": {
+      "bytes": 25735,
+      "imports": [
+        {
+          "path": "_snowpack/pkg/common/locale-27ba713c.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
     "_snowpack/pkg/d3.js": {
-      "bytes": 550737,
+      "bytes": 527955,
+      "imports": [
+        {
+          "path": "_snowpack/pkg/common/isoParse-ea4cc06e.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "_snowpack/pkg/common/isoParse-ea4cc06e.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "_snowpack/pkg/common/locale-27ba713c.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "_snowpack/pkg/common/locale-27ba713c.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "_snowpack/pkg/d3-voronoi.js": {
+      "bytes": 23171,
       "imports": []
     },
     "_snowpack/pkg/d3-appendselect.js": {
@@ -208,15 +242,46 @@
         }
       ]
     },
+    "_snowpack/pkg/d3-format.js": {
+      "bytes": 65,
+      "imports": [
+        {
+          "path": "_snowpack/pkg/common/locale-27ba713c.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
     "dist/js/utils.js": {
-      "bytes": 685,
-      "imports": []
+      "bytes": 964,
+      "imports": [
+        {
+          "path": "_snowpack/pkg/d3-format.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "_snowpack/pkg/@reuters-graphics/d3-locale.js": {
+      "bytes": 19476,
+      "imports": [
+        {
+          "path": "_snowpack/pkg/common/isoParse-ea4cc06e.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "_snowpack/pkg/common/locale-27ba713c.js",
+          "kind": "import-statement"
+        }
+      ]
     },
     "dist/js/index.js": {
-      "bytes": 6451,
+      "bytes": 9607,
       "imports": [
         {
           "path": "_snowpack/pkg/d3.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "_snowpack/pkg/d3-voronoi.js",
           "kind": "import-statement"
         },
         {
@@ -230,6 +295,14 @@
         {
           "path": "dist/js/utils.js",
           "kind": "import-statement"
+        },
+        {
+          "path": "_snowpack/pkg/@reuters-graphics/d3-locale.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "_snowpack/pkg/d3.js",
+          "kind": "import-statement"
         }
       ]
     },
@@ -238,7 +311,7 @@
       "imports": []
     },
     "dist/demo/Chart.svelte.js": {
-      "bytes": 8888,
+      "bytes": 9013,
       "imports": [
         {
           "path": "_snowpack/pkg/svelte/internal.js",
@@ -310,10 +383,10 @@
       "imports": [],
       "inputs": {
         "dist/scss/demo.css": {
-          "bytesInOutput": 251902
+          "bytesInOutput": 252140
         }
       },
-      "bytes": 251920
+      "bytes": 252158
     },
     "../~~bundle~~/dist/demo/App/index.js": {
       "imports": [],
@@ -346,7 +419,7 @@
           "bytesInOutput": 1018
         },
         "dist/demo/App/ChartContainer.svelte.js": {
-          "bytesInOutput": 2530
+          "bytesInOutput": 2534
         },
         "_snowpack/pkg/svelte.js": {
           "bytesInOutput": 0
@@ -358,7 +431,7 @@
           "bytesInOutput": 381
         },
         "_snowpack/pkg/svelte-highlight.js": {
-          "bytesInOutput": 14551
+          "bytesInOutput": 14596
         },
         "_snowpack/pkg/svelte-highlight/languages.js": {
           "bytesInOutput": 876881
@@ -376,13 +449,22 @@
           "bytesInOutput": 0
         },
         "_snowpack/pkg/svelte-json-tree.js": {
-          "bytesInOutput": 22571
+          "bytesInOutput": 22566
         },
         "dist/demo/App/Explorer.svelte.js": {
           "bytesInOutput": 761
         },
+        "_snowpack/pkg/common/locale-27ba713c.js": {
+          "bytesInOutput": 4499
+        },
+        "_snowpack/pkg/common/isoParse-ea4cc06e.js": {
+          "bytesInOutput": 12355
+        },
         "_snowpack/pkg/d3.js": {
-          "bytesInOutput": 135240
+          "bytesInOutput": 125357
+        },
+        "_snowpack/pkg/d3-voronoi.js": {
+          "bytesInOutput": 9200
         },
         "_snowpack/pkg/d3-appendselect.js": {
           "bytesInOutput": 919
@@ -390,17 +472,23 @@
         "_snowpack/pkg/lodash/merge.js": {
           "bytesInOutput": 11840
         },
+        "_snowpack/pkg/d3-format.js": {
+          "bytesInOutput": 0
+        },
         "dist/js/utils.js": {
-          "bytesInOutput": 324
+          "bytesInOutput": 264
+        },
+        "_snowpack/pkg/@reuters-graphics/d3-locale.js": {
+          "bytesInOutput": 10923
         },
         "dist/js/index.js": {
-          "bytesInOutput": 2982
+          "bytesInOutput": 4671
         },
         "dist/js/test-data.json.proxy.js": {
           "bytesInOutput": 17876
         },
         "dist/demo/Chart.svelte.js": {
-          "bytesInOutput": 2911
+          "bytesInOutput": 2986
         },
         "dist/demo/App/App.svelte.js": {
           "bytesInOutput": 893
@@ -409,7 +497,7 @@
           "bytesInOutput": 44
         }
       },
-      "bytes": 1295871
+      "bytes": 1324713
     },
     "../~~bundle~~/dist/demo/App/index.css": {
       "imports": [],

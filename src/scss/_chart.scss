@@ -22,12 +22,12 @@ $LineChart-container: '#polls-line-chart-container' !default;
       line,
       path {
         stroke: $gray-200;
-        stroke-width: 1px;
+        stroke-width: 1;
       }
 
       &.mid line,
       path {
-        stroke: $gray-300;
+        stroke: $gray-600;
       }
     }
 
@@ -42,9 +42,11 @@ $LineChart-container: '#polls-line-chart-container' !default;
     stroke-width: 4px;
     stroke-linecap: round;
     stroke-linejoin: round;
+    fill: white;
   }
 
   g.line-group {
+    pointer-events: none;
 
     .lbl-group {
       display: none;

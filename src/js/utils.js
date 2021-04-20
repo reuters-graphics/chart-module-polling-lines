@@ -1,4 +1,4 @@
-import {formatLocale} from 'd3-format';
+import { formatLocale } from 'd3-format';
 
 export function slugify(text) {
   return text
@@ -23,5 +23,18 @@ export function round(value, decimals) {
 }
 
 export const locale_US = formatLocale({
-  "shortMonths": ["Jan.", "Feb.", "March", "April", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]
+  shortMonths: [
+    'Jan.',
+    'Feb.',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'Aug.',
+    'Sept.',
+    'Oct.',
+    'Nov.',
+    'Dec.',
+  ],
 });

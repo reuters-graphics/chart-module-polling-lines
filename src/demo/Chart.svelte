@@ -37,7 +37,7 @@ Follow the notes below! -->
         hex: '#e6550d'
     }],
     selected: defaultKey,
-    lang: 'en',
+    locale: 'de',
     };
 
   afterUpdate(() => {

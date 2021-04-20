@@ -1,17 +1,12 @@
 import * as d3 from 'd3';
 
-import {
-  voronoi
-} from 'd3-voronoi';
+import { voronoi } from 'd3-voronoi';
 
-import {
-  appendSelect
-} from 'd3-appendselect';
+import { appendSelect } from 'd3-appendselect';
 import merge from 'lodash/merge';
 import * as utils from './utils';
 import D3Locale from '@reuters-graphics/d3-locale';
 import { polygonLength } from 'd3';
-
 
 d3.selection.prototype.appendSelect = appendSelect;
 
@@ -21,7 +16,6 @@ d3.selection.prototype.appendSelect = appendSelect;
  * see and customize in the baseClasses folder.
  */
 class MyChartModule {
-
   selection(selector) {
     if (!selector) return this._selection;
     this._selection = d3.select(selector);
@@ -49,7 +43,7 @@ class MyChartModule {
       right: 100,
       bottom: 50,
       left: 60,
-    }
+    },
   };
 
   /**
@@ -67,15 +61,10 @@ class MyChartModule {
       locale.apStyle();
     }
 
-
-    const {
-      margin
-    } = props;
+    const { margin } = props;
 
     const container = this.selection().node();
-    const {
-      width: containerWidth
-    } = container.getBoundingClientRect(); // Respect the width of your container!
+    const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
 
     const width = containerWidth - margin.left - margin.right;
     const height =
@@ -98,7 +87,7 @@ class MyChartModule {
 
     let startDate = props.dates[0].split(' - ')[1];
     let endDate = props.dates[props.dates.length - 1].split(' - ')[1];
-    let allDates = props.dates.map(d=> parseDate(d.split(' - ')[1]));
+    let allDates = props.dates.map((d) => parseDate(d.split(' - ')[1]));
     let xDom = [parseDate(startDate), parseDate(endDate)];
     let yDom = [0, 100];
 
@@ -108,10 +97,11 @@ class MyChartModule {
 
     const yScale = d3.scaleLinear().domain(yDom).range([height, 0]);
 
-    const xAxis = d3.axisBottom(xScale)
+    const xAxis = d3
+      .axisBottom(xScale)
       .tickSize(20)
       .tickValues(allDates)
-      .tickFormat(d => locale.formatTime('%b %e, %Y')(d));
+      .tickFormat((d) => locale.formatTime('%b %e, %Y')(d));
 
     const yAxis = d3
       .axisLeft(yScale)
@@ -156,8 +146,6 @@ class MyChartModule {
         [width, height],
       ]);
 
-
-
     const plot = this.selection()
       .appendSelect('svg') // 👈 Use appendSelect instead of append for non-data-bound elements!
       .attr('width', width + margin.left + margin.right)
@@ -172,11 +160,11 @@ class MyChartModule {
       .attr('transform', `translate(0,${height})`)
       .call(xAxis)
       .selectAll('.tick')
-      .each((d,i,e)=> {
+      .each((d, i, e) => {
         let dateStr = d3.timeFormat('%Y-%m-%d')(d);
         d3.select(e[i]).classed(`d-${dateStr}`, true);
       })
-      .classed('active', (d,i)=> i === 0 || i === allDates.length-1)
+      .classed('active', (d, i) => i === 0 || i === allDates.length - 1);
 
     plot
       .appendSelect('g.axis.y')
@@ -201,13 +189,15 @@ class MyChartModule {
         .append('g')
         .attr('class', (d) => `line-group ${utils.slugify(d.id)}`);
 
-      lineGroup.appendSelect('path.moe')
+      lineGroup
+        .appendSelect('path.moe')
         .attr('d', (d) => makeArea(d.values))
-        .style('fill', d => d.hex);
+        .style('fill', (d) => d.hex);
 
-      lineGroup.appendSelect('path.line')
+      lineGroup
+        .appendSelect('path.line')
         .attr('d', (d) => makeLine(d.values))
-        .style('stroke', d => d.hex);
+        .style('stroke', (d) => d.hex);
 
       let labelGroup = lineGroup
         .appendSelect('g.lbl-group')
@@ -220,10 +210,10 @@ class MyChartModule {
         });
 
       labelGroup.appendSelect('text.lbl-cat.bkgd');
-      labelGroup.appendSelect('text.lbl-cat.fore').style('fill', d => d.hex);
+      labelGroup.appendSelect('text.lbl-cat.fore').style('fill', (d) => d.hex);
 
       labelGroup.appendSelect('text.lbl-val.bkgd');
-      labelGroup.appendSelect('text.lbl-val.fore').style('fill', d => d.hex);
+      labelGroup.appendSelect('text.lbl-val.fore').style('fill', (d) => d.hex);
 
       labelGroup.selectAll('text.lbl-cat').text((d) => {
         return d.display;
@@ -231,7 +221,7 @@ class MyChartModule {
 
       labelGroup
         .selectAll('text.lbl-val')
-        .text((d) => locale.format(".1%")(d.values[d.values.length - 1] / 100))
+        .text((d) => locale.format('.1%')(d.values[d.values.length - 1] / 100))
         .attr('y', -15);
     }
 
@@ -258,11 +248,11 @@ class MyChartModule {
 
       update
         .select('g.lbl-group text.lbl-val.fore')
-        .text((d) => locale.format(".1%")(d.values[d.values.length - 1] / 100));
+        .text((d) => locale.format('.1%')(d.values[d.values.length - 1] / 100));
 
       update
         .select('g.lbl-group text.lbl-val.bkgd')
-        .text((d) => locale.format(".1%")(d.values[d.values.length - 1] / 100));
+        .text((d) => locale.format('.1%')(d.values[d.values.length - 1] / 100));
     }
 
     function onExit(exit) {
@@ -272,20 +262,21 @@ class MyChartModule {
     let voronoiGroup = plot.appendSelect('g.voronoi');
 
     let allVals = [];
-    lineSeries.forEach(d => {
+    lineSeries.forEach((d) => {
       d.values.forEach((dd, i) => {
         allVals.push({
           dateStr: props.dates[i].split(' - ')[1],
           val: dd,
           id: utils.slugify(d.id),
-          hex: d.hex
+          hex: d.hex,
         });
-      })
-    })
+      });
+    });
 
     let vVals = makeVoronoi.polygons(allVals);
 
-    let vPaths = voronoiGroup.selectAll('path')
+    let vPaths = voronoiGroup
+      .selectAll('path')
       .data(vVals)
       .join('path')
       .attr('d', (d) => {
@@ -295,40 +286,47 @@ class MyChartModule {
       .style('stroke', 'magenta')
       .style('opacity', 0);
 
-    let tt = plot.selectAll('g.tt')
+    let tt = plot
+      .selectAll('g.tt')
       .data(allVals)
       .join('g')
-      .attr('class', d => `tt ${utils.slugify(d.id)} d-${d.dateStr}`)
-      .attr('transform', d => {
+      .attr('class', (d) => `tt ${utils.slugify(d.id)} d-${d.dateStr}`)
+      .attr('transform', (d) => {
         let dateVal = parseDate(d.dateStr);
         let xPos = xScale(dateVal);
         let yPos = yScale(d.val);
         return `translate(${xPos}, ${yPos})`;
-      })
+      });
 
     tt.appendSelect('circle')
       .attr('r', 5)
-      .style('fill', d=> d.hex);
+      .style('fill', (d) => d.hex);
 
-    tt.appendSelect('text.bkgd')
-    tt.appendSelect('text.fore').style('fill', d=> d.hex);
+    tt.appendSelect('text.bkgd');
+    tt.appendSelect('text.fore').style('fill', (d) => d.hex);
     tt.selectAll('text')
       .attr('y', -10)
-      .text(d => locale.format(".1%")(d.val / 100))
-      
-    vPaths.on('mouseover', (event, d) => {
-        tt.classed('active', t=> t.dateStr === d.data.dateStr);
+      .text((d) => locale.format('.1%')(d.val / 100));
+
+    vPaths
+      .filter((d) => {
+        return d.data.dateStr !== endDate;
+      })
+      .on('mouseover', (event, d) => {
+        tt.classed('active', (t) => t.dateStr === d.data.dateStr);
         plot.selectAll('g.lbl-group').classed('active', false);
         plot.selectAll('.x.axis .tick').classed('active', false);
-        plot.selectAll(`.x.axis .tick.d-${d.data.dateStr}`).classed('active', true);
-      
+        plot
+          .selectAll(`.x.axis .tick.d-${d.data.dateStr}`)
+          .classed('active', true);
       })
       .on('mouseout', (d) => {
         tt.classed('active', false);
         plot.selectAll('g.lbl-group').classed('active', true);
-        plot.selectAll('.x.axis .tick').classed('active', (d,i)=> i === 0 || i === allDates.length-1);
+        plot
+          .selectAll('.x.axis .tick')
+          .classed('active', (d, i) => i === 0 || i === allDates.length - 1);
       });
-
 
     return this; // Generally, always return the chart class from draw!
   }
