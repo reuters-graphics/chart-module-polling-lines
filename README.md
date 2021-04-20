@@ -16,9 +16,11 @@ $ yarn add https://github.com/reuters-graphics/chart-module-polls-line-chart.git
 import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
 ```
 
-## `chartProps` chart configuration options:
+## Chart configuration options:
 
-`dates`: (array) The top-level unformatted dates array from the data. (Ex: data.dates). Used to define xScale domain
+`$: chartProps` (Object)
+
+`dates`: (Array) The top-level unformatted dates array from the data. (Ex: data.dates). Used to define xScale domain
 `lineVars` : (Object array) Variables for which we want to draw lines.
 
   * `key` : (String) Keys for series we wish to plot. `Total approve` or `Total disapprove`
@@ -49,7 +51,7 @@ Example configuration:
         },
         hex: '#e6550d'
     }],
-    selected: defaultKey,
+    selected: 'Respondents:AllRespondents',
     locale: 'de',
     };
 ```
