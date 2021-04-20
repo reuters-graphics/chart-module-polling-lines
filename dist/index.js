@@ -106,6 +106,14 @@ var MyChartModule = /*#__PURE__*/function () {
       return this;
     }
   }, {
+    key: "checkLabelOverlap",
+    value: function checkLabelOverlap(val1, val2) {
+      var order = [val1, val2].sort(function (a, b) {
+        return a - b;
+      });
+      console.log('order:', order);
+    }
+  }, {
     key: "draw",
 
     /**
@@ -134,10 +142,11 @@ var MyChartModule = /*#__PURE__*/function () {
       var width = containerWidth - margin.left - margin.right;
       var height = containerWidth * props.aspectHeight - margin.top - margin.bottom;
       var parseDate = d3.timeParse('%Y-%m-%d');
+      console.log(lang);
       var lineSeries = props.lineVars.map(function (v) {
         return {
           id: v.key,
-          display: v.display,
+          display: v.display[lang] ? v.display[lang] : v.display['en'],
           hex: v.hex,
           values: data[v.key]
         };

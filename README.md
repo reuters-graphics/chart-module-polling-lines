@@ -15,6 +15,45 @@ $ yarn add https://github.com/reuters-graphics/chart-module-polls-line-chart.git
 ```javascript
 import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
 
+## Polling chart configuration options:
+
+`dates`: The top-level unformatted dates array from the data. (Ex: data.dates). Used to define xScale domain.
+`lineVars` : Array of variables for which we want to draw lines.
+  * `key` : Key value for series we wish to plot. `Total approve` or `Total disapprove`
+  * `display` : This is where we set translations. Use key/value pairs for lang and display string. Ex: `en` : `Approve`
+  * `hex` : Hex display color for line series.
+`selection` : The default key for this chart. Format is Demo:Subgroup (Ex: `Party:Democrat`).
+`locale` : The 2-letter language abbreviation. Sets translation and number/date formatting. (Ex: `de` for German.)
+
+Example configuration: 
+
+```
+  $: chartProps = {
+    dates: testData.dates,
+    lineVars: [{
+        key: 'Total approve',
+        display: {
+          'en' : 'Approve',
+          'de' : 'Zustimmung'
+        },
+        hex: '#31a354'
+      },
+      {
+        key: 'Total disapprove',
+        display: {
+          'en' : 'Disapprove',
+          'de' : 'Missbilligung'
+        },
+        hex: '#e6550d'
+    }],
+    selected: defaultKey,
+    locale: 'de',
+    };
+```
+
+
+
+
 const chart = new LineChart();
 
 // To create your chart, pass a selector string to the chart's selection method,
