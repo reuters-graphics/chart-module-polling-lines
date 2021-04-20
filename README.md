@@ -18,13 +18,15 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
 
 ## Polling chart configuration options:
 
-`dates`: The top-level unformatted dates array from the data. (Ex: data.dates). Used to define xScale domain.
-`lineVars` : Array of variables for which we want to draw lines.
-  * `key` : Key value for series we wish to plot. `Total approve` or `Total disapprove`
-  * `display` : This is where we set translations. Use key/value pairs for lang and display string. Ex: `en` : `Approve`
-  * `hex` : Hex display color for line series.
-`selection` : The default key for this chart. Format is Demo:Subgroup (Ex: `Party:Democrat`).
-`locale` : The 2-letter language abbreviation. Sets translation and number/date formatting. (Ex: `de` for German.)
+`dates`: (array) The top-level unformatted dates array from the data. (Ex: data.dates). Used to define xScale domain.
+`lineVars` : (Object array) Variables for which we want to draw lines.
+
+  * `key` : (String) Keys for series we wish to plot. `Total approve` or `Total disapprove`
+  * `display` : (Object) This is where we set translations. Ex: {`en` : `Approve`}
+  * `hex` : (String) Hex display color for line series.
+  
+`selection` : (String) The default key for this chart. Format is Demo:Subgroup (Ex: `Party:Democrat`).
+`locale` : (String) The 2-letter language abbreviation. Sets translation and number/date formatting. (Ex: `de` for German.)
 
 Example configuration: 
 
