@@ -30,7 +30,7 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
 `selection` : (String) The default key for this chart. Format is Demo:Subgroup (Ex: `Party:Democrat`).
 `locale` : (String) The 2-letter language abbreviation. Sets translation and number/date formatting. (Ex: `de` for German.)
 
-### Example configuration: 
+### Example usage: 
 
 ```javascript
   $: chartProps = {
@@ -63,28 +63,24 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
     selected: 'Respondents:AllRespondents',
     locale: 'de',
     };
-```
 
+  const chart = new LineChart();
 
+  // To create your chart, pass a selector string to the chart's selection method,
+  // as well as any props or data to their respective methods. Then call draw.
+  chart
+    .selection('#chart')
+    .data([1, 2, 3])
+    .props({ stroke: 'orange' })
+    .draw();
 
+  // You can call any method again to update the chart.
+  chart
+    .data([3, 4, 5])
+    .draw();
 
-const chart = new LineChart();
-
-// To create your chart, pass a selector string to the chart's selection method,
-// as well as any props or data to their respective methods. Then call draw.
-chart
-  .selection('#chart')
-  .data([1, 2, 3])
-  .props({ stroke: 'orange' })
-  .draw();
-
-// You can call any method again to update the chart.
-chart
-  .data([3, 4, 5])
-  .draw();
-
-// Or just call the draw function alone, which is useful for resizing the chart.
-chart.draw();
+  // Or just call the draw function alone, which is useful for resizing the chart.
+  chart.draw();
 ```
 
 To apply this chart's default styles when using SCSS, simply define the variable `$LineChart-container` to represent the ID or class of the chart's container(s) and import the `_chart.scss` partial.
