@@ -30,8 +30,7 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
 `selection` : (String) The default key for this chart. Format is Demo:Subgroup (Ex: `Party:Democrat`).
 `locale` : (String) The 2-letter language abbreviation. Sets translation and number/date formatting. (Ex: `de` for German.)
 
-Example configuration: 
-
+#### Example configuration: 
 
 ```javascript
   $: chartProps = {
