@@ -16,7 +16,7 @@ $ yarn add https://github.com/reuters-graphics/chart-module-polls-line-chart.git
 import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
 ```
 
-## Polling chart configuration options:
+## `chartProps` chart configuration options:
 
 `dates`: (array) The top-level unformatted dates array from the data. (Ex: data.dates). Used to define xScale domain
 `lineVars` : (Object array) Variables for which we want to draw lines.
