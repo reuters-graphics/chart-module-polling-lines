@@ -1,12 +1,18 @@
 import * as d3 from 'd3';
 
-import { voronoi } from 'd3-voronoi';
+import {
+  voronoi
+} from 'd3-voronoi';
 
-import { appendSelect } from 'd3-appendselect';
+import {
+  appendSelect
+} from 'd3-appendselect';
 import merge from 'lodash/merge';
 import * as utils from './utils';
 import D3Locale from '@reuters-graphics/d3-locale';
-import { polygonLength } from 'd3';
+import {
+  polygonLength
+} from 'd3';
 
 d3.selection.prototype.appendSelect = appendSelect;
 
@@ -34,9 +40,30 @@ class MyChartModule {
     return this;
   }
 
-  checkLabelOverlap(val1, val2) {
-    let order = [val1, val2].sort((a, b) => a - b);
-    console.log('order:', order);
+  checkLabelOverlap(lineSeries, endDate) {
+
+    let vals = lineSeries.map(d => {
+        let yPos = this.yScale(d.values[d.values.length - 1]);
+        console.log(d.id, d.values, yPos);
+        return Object.assign(d, d.yPos = yPos)
+      })
+      .sort((a, b) => a.yPos - b.yPos);
+
+
+    let diff = vals[0].yPos - vals[1].yPos;
+
+    if (Math.abs(diff) < 30) {
+      vals[0].yPosNew = vals[0].yPos - (30 - Math.abs(diff));
+      vals[1].yPosNew = vals[1].yPos + (20 - Math.abs(diff));
+    }
+
+    let obj = {};
+    vals.forEach(d => {
+      obj[d.id] = d.yPosNew ? d.yPosNew : d.yPos;
+    });
+
+    return obj;
+
   }
 
   defaultData = [];
@@ -45,10 +72,12 @@ class MyChartModule {
     aspectHeight: 0.7,
     margin: {
       top: 20,
-      right: 100,
+      right: 60,
       bottom: 50,
-      left: 60,
+      left: 55,
     },
+    smallChart : false,
+    locale: 'en'
   };
 
   /**
@@ -66,18 +95,20 @@ class MyChartModule {
       locale.apStyle();
     }
 
-    const { margin } = props;
+    const {
+      margin
+    } = props;
 
     const container = this.selection().node();
-    const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
+    const {
+      width: containerWidth
+    } = container.getBoundingClientRect(); // Respect the width of your container!
 
     const width = containerWidth - margin.left - margin.right;
     const height =
       containerWidth * props.aspectHeight - margin.top - margin.bottom;
 
-    const parseDate = d3.timeParse('%Y-%m-%d');
-
-    console.log(lang);
+    this.parseDate = d3.timeParse('%Y-%m-%d');
 
     let lineSeries = props.lineVars.map((v) => {
       return {
@@ -94,70 +125,74 @@ class MyChartModule {
 
     let startDate = props.dates[0].split(' - ')[1];
     let endDate = props.dates[props.dates.length - 1].split(' - ')[1];
-    let allDates = props.dates.map((d) => parseDate(d.split(' - ')[1]));
-    let xDom = [parseDate(startDate), parseDate(endDate)];
+    let allDates = props.dates.map((d) => this.parseDate(d.split(' - ')[1]));
+    let xDom = [this.parseDate(startDate), this.parseDate(endDate)];
     let yDom = [0, 100];
 
     let sampleSize = data['Total - Unweighted Count'];
 
-    const xScale = d3.scaleTime().domain(xDom).range([0, width]);
-
-    const yScale = d3.scaleLinear().domain(yDom).range([height, 0]);
+    this.xScale = d3.scaleTime().domain(xDom).range([0, width]);
+    this.yScale = d3.scaleLinear().domain(yDom).range([height, 0]);
 
     const xAxis = d3
-      .axisBottom(xScale)
+      .axisBottom(this.xScale)
       .tickSize(20)
       .tickValues(allDates)
       .tickFormat((d) => locale.formatTime('%b %e, %Y')(d));
 
+    let yTicks = props.smallChart ? [0,50,100] : [0, 25, 50, 75, 100];
+
     const yAxis = d3
-      .axisLeft(yScale)
+      .axisLeft(this.yScale)
       .ticks(5)
-      .tickValues([0, 25, 50, 75, 100])
+      .tickValues(yTicks)
       .tickSize(-20 - width)
-      .tickFormat((d) => `${d}%`);
+      //.tickFormat((d) => `${d}%`);
 
     const makeLine = d3
       .line()
       .x((d, i) => {
         let dateStr = props.dates[i].split(' - ')[1];
-        let dateVal = parseDate(dateStr);
-        return xScale(dateVal);
+        let dateVal = this.parseDate(dateStr);
+        return this.xScale(dateVal);
       })
-      .y((d) => yScale(d));
+      .y((d) => this.yScale(d));
 
     const makeArea = d3
       .area()
       .x((d, i) => {
         let dateStr = props.dates[i].split(' - ')[1];
-        let dateVal = parseDate(dateStr);
-        return xScale(dateVal);
+        let dateVal = this.parseDate(dateStr);
+        return this.xScale(dateVal);
       })
       .y0((d, i) => {
         let moe = Math.sqrt(1.3 / sampleSize[i]) * 100;
-        return yScale(d) + moe;
+        return this.yScale(d) + moe;
       })
       .y1((d, i) => {
         let moe = Math.sqrt(1.3 / sampleSize[i]) * 100;
-        return yScale(d) - moe;
+        return this.yScale(d) - moe;
       });
 
     const makeVoronoi = voronoi()
       .x((d, i) => {
-        let dateVal = parseDate(d.dateStr);
-        return xScale(dateVal);
+        let dateVal = this.parseDate(d.dateStr);
+        return this.xScale(dateVal);
       })
-      .y((d) => yScale(d.val))
+      .y((d) => this.yScale(d.val))
       .extent([
         [0, 0],
         [width, height],
       ]);
+
+    let _this = this;
 
     const plot = this.selection()
       .appendSelect('svg') // 👈 Use appendSelect instead of append for non-data-bound elements!
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .appendSelect('g.plot')
+      .classed('small-chart', props.smallChart)
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     const transition = plot.transition().duration(500);
@@ -178,7 +213,9 @@ class MyChartModule {
       .attr('transform', `translate(-20,0)`)
       .call(yAxis)
       .selectAll('g.tick')
-      .classed('mid', (d) => d === 50);
+      .classed('mid', (d) => d === 50)
+      .classed('zero', (d) => d === 0);
+
 
     let lineGroup = plot
       .selectAll('g.line-group')
@@ -186,99 +223,134 @@ class MyChartModule {
         return d.id;
       })
       .join(
-        (enter) => onEnter(enter),
-        (update) => onUpdate(update),
-        (exit) => onExit(exit)
+        enter => {
+          let lineGroup = enter
+            .append('g')
+            .attr('class', (d) => `line-group ${utils.slugify(d.id)}`);
+
+          lineGroup
+            .appendSelect('path.moe')
+            .attr('d', (d) => makeArea(d.values))
+            .style('fill', (d) => d.hex);
+
+          lineGroup
+            .appendSelect('path.line')
+            .attr('d', (d) => makeLine(d.values))
+            .style('stroke', (d) => d.hex);
+        },
+
+        update => {
+          update
+            .select('path.moe')
+            .transition(transition)
+            .attr('d', (d) => makeArea(d.values));
+
+          update
+            .select('path.line')
+            .transition(transition)
+            .attr('d', (d) => makeLine(d.values));
+
+        },
+
+        exit => {
+          exit.transition(transition).style('opacity', 0).remove();
+        }
       );
-
-    function onEnter(enter) {
-      let lineGroup = enter
-        .append('g')
-        .attr('class', (d) => `line-group ${utils.slugify(d.id)}`);
-
-      lineGroup
-        .appendSelect('path.moe')
-        .attr('d', (d) => makeArea(d.values))
-        .style('fill', (d) => d.hex);
-
-      lineGroup
-        .appendSelect('path.line')
-        .attr('d', (d) => makeLine(d.values))
-        .style('stroke', (d) => d.hex);
-
-      let labelGroup = lineGroup
-        .appendSelect('g.lbl-group')
-        .classed('active', true)
-        .attr('transform', (d) => {
-          let dateVal = parseDate(endDate);
-          let xPos = xScale(dateVal) + 5;
-          let yPos = yScale(d.values[d.values.length - 1]) + 5;
-          return `translate(${xPos},${yPos})`;
-        });
-
-      labelGroup.appendSelect('text.lbl-cat.bkgd');
-      labelGroup.appendSelect('text.lbl-cat.fore').style('fill', (d) => d.hex);
-
-      labelGroup.appendSelect('text.lbl-val.bkgd');
-      labelGroup.appendSelect('text.lbl-val.fore').style('fill', (d) => d.hex);
-
-      labelGroup.selectAll('text.lbl-cat').text((d) => {
-        return d.display;
-      });
-
-      labelGroup
-        .selectAll('text.lbl-val')
-        .text((d) => locale.format('.1%')(d.values[d.values.length - 1] / 100))
-        .attr('y', -15);
-    }
-
-    function onUpdate(update) {
-      update
-        .select('path.moe')
-        .transition(transition)
-        .attr('d', (d) => makeArea(d.values));
-
-      update
-        .select('path.line')
-        .transition(transition)
-        .attr('d', (d) => makeLine(d.values));
-
-      let labelGroup = update
-        .select('g.lbl-group')
-        .transition(transition)
-        .attr('transform', (d) => {
-          let dateVal = parseDate(endDate);
-          let xPos = xScale(dateVal) + 5;
-          let yPos = yScale(d.values[d.values.length - 1]) + 5;
-          return `translate(${xPos},${yPos})`;
-        });
-
-      update
-        .select('g.lbl-group text.lbl-val.fore')
-        .text((d) => locale.format('.1%')(d.values[d.values.length - 1] / 100));
-
-      update
-        .select('g.lbl-group text.lbl-val.bkgd')
-        .text((d) => locale.format('.1%')(d.values[d.values.length - 1] / 100));
-    }
-
-    function onExit(exit) {
-      exit.transition(transition).style('opacity', 0).remove();
-    }
 
     let voronoiGroup = plot.appendSelect('g.voronoi');
 
     let allVals = [];
     lineSeries.forEach((d) => {
+
       d.values.forEach((dd, i) => {
         allVals.push({
           dateStr: props.dates[i].split(' - ')[1],
           val: dd,
           id: utils.slugify(d.id),
           hex: d.hex,
+          display: d.display
         });
       });
+
     });
+
+    let tt = plot
+      .selectAll('g.tt')
+      .data(allVals)
+      .join(enter => {
+          let sel = enter.append('g')
+            .attr('class', (d) => `tt ${utils.slugify(d.id)} d-${d.dateStr}`)
+            .classed('last active', d => d.dateStr == endDate)
+            .attr('transform', (d) => {
+              let dateVal = _this.parseDate(d.dateStr);
+              let xPos = this.xScale(dateVal);
+              let yPos = this.yScale(d.val);
+              return `translate(${xPos}, ${yPos})`;
+            });
+
+          sel.append('circle')
+            .attr('r', 5)
+            .style('fill', (d) => d.hex);
+
+          sel.appendSelect('text.val.bkgd');
+          sel.appendSelect('text.val.fore').style('fill', (d) => d.hex);
+          sel.selectAll('text.val')
+            .attr('y', d => d.val > 50 ? -12 : +24)
+            .text((d) => locale.format('.1%')(d.val / 100))
+
+          let lastVal = sel.filter(d => {
+            return d.dateStr == endDate;
+          });
+
+          lastVal.appendSelect('text.cat.bkgd');
+          lastVal.appendSelect('text.cat.fore').style('fill', (d) => d.hex);
+          lastVal.selectAll('text.cat')
+            .attr('y', d => d.val > 50 ? -32 : +40)
+            .text((d) => {
+              return d.display;
+            })
+
+
+
+        },
+        update => {
+
+          update.transition(transition).attr('transform', (d) => {
+            let dateVal = _this.parseDate(d.dateStr);
+            let xPos = this.xScale(dateVal);
+            let yPos = this.yScale(d.val);
+            return `translate(${xPos}, ${yPos})`;
+          });
+
+          update.select('text.val.bkgd')
+            .text((d) => locale.format('.1%')(d.val / 100))
+            .transition(transition)
+            .attr('y', d => {
+              return d.val > 50 ? -12 : +24
+            })
+
+          update.select('text.val.fore')
+            .text((d) => locale.format('.1%')(d.val / 100))
+            .transition(transition)
+            .attr('y', d => {
+              return d.val > 50 ? -12 : +24
+            })
+
+          let lastVal = update.filter(d => {
+            return d.dateStr == endDate;
+          })
+
+          lastVal.select('text.cat.bkgd')
+            .text(d => d.display)
+            .transition(transition)
+            .attr('y', d => d.val > 50 ? -32 : +40)
+
+          lastVal.select('text.cat.fore')
+            .text(d => d.display)
+            .transition(transition)
+            .attr('y', d => d.val > 50 ? -32 : +40)
+        }
+      )
 
     let vVals = makeVoronoi.polygons(allVals);
 
@@ -293,43 +365,24 @@ class MyChartModule {
       .style('stroke', 'magenta')
       .style('opacity', 0);
 
-    let tt = plot
-      .selectAll('g.tt')
-      .data(allVals)
-      .join('g')
-      .attr('class', (d) => `tt ${utils.slugify(d.id)} d-${d.dateStr}`)
-      .attr('transform', (d) => {
-        let dateVal = parseDate(d.dateStr);
-        let xPos = xScale(dateVal);
-        let yPos = yScale(d.val);
-        return `translate(${xPos}, ${yPos})`;
-      });
-
-    tt.appendSelect('circle')
-      .attr('r', 5)
-      .style('fill', (d) => d.hex);
-
-    tt.appendSelect('text.bkgd');
-    tt.appendSelect('text.fore').style('fill', (d) => d.hex);
-    tt.selectAll('text')
-      .attr('y', -10)
-      .text((d) => locale.format('.1%')(d.val / 100));
-
     vPaths
-      .filter((d) => {
-        return d.data.dateStr !== endDate;
-      })
-      .on('mouseover', (event, d) => {
-        tt.classed('active', (t) => t.dateStr === d.data.dateStr);
-        plot.selectAll('g.lbl-group').classed('active', false);
+      .on('mouseover', function (event, d) {
+
+        plot.selectAll('g.tt').classed('active', (t) => {
+          return t.dateStr === d.data.dateStr;
+        });
+
         plot.selectAll('.x.axis .tick').classed('active', false);
         plot
           .selectAll(`.x.axis .tick.d-${d.data.dateStr}`)
           .classed('active', true);
+
+
       })
       .on('mouseout', (d) => {
-        tt.classed('active', false);
-        plot.selectAll('g.lbl-group').classed('active', true);
+        plot.selectAll('g.tt').classed('active', false);
+        plot.selectAll('g.tt.last').classed('active', true);
+
         plot
           .selectAll('.x.axis .tick')
           .classed('active', (d, i) => i === 0 || i === allDates.length - 1);

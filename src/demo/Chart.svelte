@@ -18,10 +18,6 @@ Follow the notes below! -->
   let dropDownArray = setDropdownData();
   let chartData = testData.demographics[defaultKey];
 
-  // ...
-
-
-console.log(JSON.stringify(testData.dates))
 
   // 🎈 Tie your custom props back together into one chartProps object.
   $: chartProps = {
@@ -32,7 +28,7 @@ console.log(JSON.stringify(testData.dates))
           'en' : 'Approve',
           'de' : 'Zustimmung'
         },
-        hex: '#31a354'
+        hex: '#00B294' //green
       },
       {
         key: 'Total disapprove',
@@ -40,10 +36,11 @@ console.log(JSON.stringify(testData.dates))
           'en' : 'Disapprove',
           'de' : 'Missbilligung'
         },
-        hex: '#e6550d'
+        hex: '#7A61B8' //purple
     }],
     selected: defaultKey,
-    locale: 'de',
+    locale: 'en',
+    smallChart: false
     };
 
   afterUpdate(() => {
@@ -77,6 +74,8 @@ console.log(JSON.stringify(testData.dates))
   function getVal() {
     chartProps.selected = document.getElementById('dropdown').value;
     chartData = testData.demographics[chartProps.selected];
+
+    console.log('getVal');
   }
 </script>
 

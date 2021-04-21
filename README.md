@@ -18,8 +18,8 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
 
 ## Chart configuration options:
 
-`$: chartProps` (Object)
-
+`$: chartProps`: (Object) Passed to the chart via the props() method.
+ 
 `dates`: (Array) The top-level unformatted dates array from the data. (Ex: data.dates). Used to define xScale domain
 `lineVars` : (Object array) Variables for which we want to draw lines.
 
@@ -70,8 +70,8 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
   // as well as any props or data to their respective methods. Then call draw.
   chart
     .selection('#chart')
-    .data([1, 2, 3])
-    .props({ stroke: 'orange' })
+    .data()
+    .props(chartProps)
     .draw();
 
   // You can call any method again to update the chart.

@@ -6,6 +6,25 @@ $LineChart-container: '#polls-line-chart-container' !default;
 
 #{$LineChart-container} {
 
+
+  g.plot.small-chart {
+
+    pointer-events: none;
+
+    .x.axis .tick {
+      display: none;
+    }
+
+    .y.axis .tick text {
+      display: none;
+    }
+
+    .tt text.cat {
+      display: none;
+    }
+  }
+
+
   /* Write your chart styles here */
   .axis {
     pointer-events: none;
@@ -25,9 +44,10 @@ $LineChart-container: '#polls-line-chart-container' !default;
         stroke-width: 1;
       }
 
-      &.mid line,
+      &.zero line,
       path {
-        stroke: $gray-600;
+        stroke: $gray-800;
+        stroke-width: 2;
       }
     }
 
@@ -71,35 +91,7 @@ $LineChart-container: '#polls-line-chart-container' !default;
     }
 
     path.moe {
-      opacity: 0.1;
-    }
-
-    &.total-approve {
-      // path.moe {
-      //   fill: $green-400;
-      // }
-
-      // path.line {
-      //   stroke: $green-400;
-      // }
-
-      // text.fore {
-      //   fill: $green-400;
-      // }
-    }
-
-    &.total-disapprove {
-      // path.moe {
-      //   fill: $orange-400;
-      // }
-
-      // path.line {
-      //   stroke: $orange-400;
-      // }
-
-      // text.fore {
-      //   fill: $orange-400;
-      // }
+      opacity: 0.30;
     }
   }
 
