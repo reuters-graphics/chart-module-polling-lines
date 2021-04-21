@@ -311,7 +311,7 @@
       "imports": []
     },
     "dist/demo/Chart.svelte.js": {
-      "bytes": 9164,
+      "bytes": 9165,
       "imports": [
         {
           "path": "_snowpack/pkg/svelte/internal.js",
