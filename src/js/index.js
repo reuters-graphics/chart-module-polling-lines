@@ -85,7 +85,7 @@ class MyChartModule {
     const container = this.selection().node();
     const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
 
-    margin.left = props.smallChart ? 30 : margin.left;
+    margin.left = props.smallChart ? 0 : margin.left;
     margin.right = props.smallChart ? 30 : margin.right;
 
     const width = containerWidth - margin.left - margin.right;

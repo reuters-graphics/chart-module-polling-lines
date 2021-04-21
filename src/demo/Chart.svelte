@@ -40,7 +40,7 @@ Follow the notes below! -->
     }],
     selected: defaultKey,
     locale: 'en',
-    smallChart: false
+    smallChart: true
     };
 
   afterUpdate(() => {
