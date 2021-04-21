@@ -151,7 +151,7 @@ var MyChartModule = /*#__PURE__*/function () {
           containerWidth = _container$getBoundin.width; // Respect the width of your container!
 
 
-      margin.left = props.smallChart ? 30 : margin.left;
+      margin.left = props.smallChart ? 0 : margin.left;
       margin.right = props.smallChart ? 30 : margin.right;
       var width = containerWidth - margin.left - margin.right;
       var height = containerWidth * props.aspectHeight - margin.top - margin.bottom;
@@ -343,12 +343,12 @@ var MyChartModule = /*#__PURE__*/function () {
           return "translate(".concat(xPos, ", ").concat(yPos, ")");
         });
         update.select('text.val.bkgd').text(function (d) {
-          return locale.format('.1%')(d.val / 100);
+          return locale.format('.0%')(d.val / 100);
         }).transition(transition).attr('y', function (d) {
           return labelOffset(d, 'val');
         });
         update.select('text.val.fore').text(function (d) {
-          return locale.format('.1%')(d.val / 100);
+          return locale.format('.0%')(d.val / 100);
         }).transition(transition).attr('y', function (d) {
           return labelOffset(d, 'val');
         });
