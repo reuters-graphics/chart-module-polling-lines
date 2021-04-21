@@ -189,7 +189,8 @@ var MyChartModule = /*#__PURE__*/function () {
         return locale.formatTime('%b %e, %Y')(d);
       });
       var yTicks = props.smallChart ? [0, 50, 100] : [0, 25, 50, 75, 100];
-      var yAxis = d3.axisLeft(this.yScale).ticks(5).tickValues(yTicks).tickSize(-20 - width); //.tickFormat((d) => `${d}%`);
+      var yTickSize = props.smallChart ? -20 - width : -20;
+      var yAxis = d3.axisLeft(this.yScale).ticks(5).tickValues(yTicks).tickSize(yTickSize); //.tickFormat((d) => `${d}%`);
 
       var makeLine = d3.line().x(function (d, i) {
         var dateStr = props.dates[i].split(' - ')[1];
@@ -234,9 +235,8 @@ var MyChartModule = /*#__PURE__*/function () {
       });
       plot.appendSelect('g.axis.y').attr('transform', "translate(-20,0)").call(yAxis).selectAll('g.tick').classed('mid', function (d) {
         return d === 50;
-      }).classed('zero', function (d) {
-        return d === 0;
       });
+      plot.appendSelect('line.zero').attr('x1', -20).attr('x2', width).attr('y1', this.yScale(0)).attr('y2', this.yScale(0)).raise();
       plot.selectAll('g.line-group').data(lineSeries, function (d) {
         return d.id;
       }).join(function (enter) {

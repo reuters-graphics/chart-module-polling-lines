@@ -37,23 +37,23 @@ $LineChart-container: '#polls-line-chart-container' !default;
 
     .tick {
 
-      
+
       line,
       path {
         stroke: $gray-200;
         stroke-width: 1;
       }
 
-      &.zero line,
-      path {
-        stroke: $gray-800;
-        stroke-width: 2;
-      }
     }
 
     path.domain {
       display: none;
     }
+  }
+
+  line.zero {
+    stroke: $gray-800;
+    stroke-width: 2;
   }
 
   text.bkgd {
@@ -73,7 +73,9 @@ $LineChart-container: '#polls-line-chart-container' !default;
 
       &.active {
         display: block;
-      };
+      }
+
+      ;
     }
 
     text.lbl-val {
@@ -108,11 +110,13 @@ $LineChart-container: '#polls-line-chart-container' !default;
   g.tt {
     display: none;
     pointer-events: none;
-    
+
     &.active {
       display: block;
-    };
-    
+    }
+
+    ;
+
     circle {
       stroke: white;
       stroke-width: 2;

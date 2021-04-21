@@ -33,6 +33,7 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
   * yAxis tick marks at 0,50,100
   * No category labels on lines
   * No mouseover interactions
+  * Ticks extend full width on small charts only
 
 ### Example usage: 
 

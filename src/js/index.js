@@ -129,12 +129,13 @@ class MyChartModule {
       .tickFormat((d) => locale.formatTime('%b %e, %Y')(d));
 
     let yTicks = props.smallChart ? [0, 50, 100] : [0, 25, 50, 75, 100];
+    let yTickSize = props.smallChart ? -20 - width : -20;
 
     const yAxis = d3
       .axisLeft(this.yScale)
       .ticks(5)
       .tickValues(yTicks)
-      .tickSize(-20 - width);
+      .tickSize(yTickSize);
     //.tickFormat((d) => `${d}%`);
 
     const makeLine = d3
@@ -201,8 +202,15 @@ class MyChartModule {
       .attr('transform', `translate(-20,0)`)
       .call(yAxis)
       .selectAll('g.tick')
-      .classed('mid', (d) => d === 50)
-      .classed('zero', (d) => d === 0);
+      .classed('mid', (d) => d === 50);
+
+    plot
+      .appendSelect('line.zero')
+      .attr('x1', -20)
+      .attr('x2', width)
+      .attr('y1', this.yScale(0))
+      .attr('y2', this.yScale(0))
+      .raise();
 
     let lineGroup = plot
       .selectAll('g.line-group')
