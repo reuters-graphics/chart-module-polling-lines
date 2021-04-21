@@ -29,6 +29,10 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
   
 `selection` : (String) The default key for this chart. Format is Demo:Subgroup (Ex: `Party:Democrat`).
 `locale` : (String) The 2-letter language abbreviation. Sets translation and number/date formatting. (Ex: `de` for German.)
+`smallChart` (Boolean) Style changes for small rail charts
+  * yAxis tick marks at 0,50,100
+  * No category labels on lines
+  * No mouseover interactions
 
 ### Example usage: 
 
@@ -62,6 +66,7 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
     }],
     selected: 'Respondents:AllRespondents',
     locale: 'de',
+    smallChart: false
     };
 
   const chart = new LineChart();
