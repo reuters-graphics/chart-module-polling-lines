@@ -77,10 +77,12 @@ var MyChartModule = /*#__PURE__*/function () {
       aspectHeight: 0.7,
       margin: {
         top: 20,
-        right: 100,
+        right: 60,
         bottom: 50,
-        left: 60
-      }
+        left: 55
+      },
+      smallChart: false,
+      locale: 'en'
     });
   }
 
@@ -107,11 +109,29 @@ var MyChartModule = /*#__PURE__*/function () {
     }
   }, {
     key: "checkLabelOverlap",
-    value: function checkLabelOverlap(val1, val2) {
-      var order = [val1, val2].sort(function (a, b) {
-        return a - b;
+    value: function checkLabelOverlap(lineSeries, endDate) {
+      var _this2 = this;
+
+      var vals = lineSeries.map(function (d) {
+        var yPos = _this2.yScale(d.values[d.values.length - 1]);
+
+        console.log(d.id, d.values, yPos);
+        return Object.assign(d, d.yPos = yPos);
+      }).sort(function (a, b) {
+        return a.yPos - b.yPos;
       });
-      console.log('order:', order);
+      var diff = vals[0].yPos - vals[1].yPos;
+
+      if (Math.abs(diff) < 30) {
+        vals[0].yPosNew = vals[0].yPos - (30 - Math.abs(diff));
+        vals[1].yPosNew = vals[1].yPos + (20 - Math.abs(diff));
+      }
+
+      var obj = {};
+      vals.forEach(function (d) {
+        obj[d.id] = d.yPosNew ? d.yPosNew : d.yPos;
+      });
+      return obj;
     }
   }, {
     key: "draw",
@@ -121,6 +141,8 @@ var MyChartModule = /*#__PURE__*/function () {
      * Remember to use appendSelect!
      */
     value: function draw() {
+      var _this3 = this;
+
       var data = this.data(); // Data passed to your chart
 
       var props = this.props(); // Props passed to your chart
@@ -141,8 +163,7 @@ var MyChartModule = /*#__PURE__*/function () {
 
       var width = containerWidth - margin.left - margin.right;
       var height = containerWidth * props.aspectHeight - margin.top - margin.bottom;
-      var parseDate = d3.timeParse('%Y-%m-%d');
-      console.log(lang);
+      this.parseDate = d3.timeParse('%Y-%m-%d');
       var lineSeries = props.lineVars.map(function (v) {
         return {
           id: v.key,
@@ -157,45 +178,53 @@ var MyChartModule = /*#__PURE__*/function () {
       var startDate = props.dates[0].split(' - ')[1];
       var endDate = props.dates[props.dates.length - 1].split(' - ')[1];
       var allDates = props.dates.map(function (d) {
-        return parseDate(d.split(' - ')[1]);
+        return _this3.parseDate(d.split(' - ')[1]);
       });
-      var xDom = [parseDate(startDate), parseDate(endDate)];
+      var xDom = [this.parseDate(startDate), this.parseDate(endDate)];
       var yDom = [0, 100];
       var sampleSize = data['Total - Unweighted Count'];
-      var xScale = d3.scaleTime().domain(xDom).range([0, width]);
-      var yScale = d3.scaleLinear().domain(yDom).range([height, 0]);
-      var xAxis = d3.axisBottom(xScale).tickSize(20).tickValues(allDates).tickFormat(function (d) {
+      this.xScale = d3.scaleTime().domain(xDom).range([0, width]);
+      this.yScale = d3.scaleLinear().domain(yDom).range([height, 0]);
+      var xAxis = d3.axisBottom(this.xScale).tickSize(20).tickValues(allDates).tickFormat(function (d) {
         return locale.formatTime('%b %e, %Y')(d);
       });
-      var yAxis = d3.axisLeft(yScale).ticks(5).tickValues([0, 25, 50, 75, 100]).tickSize(-20 - width).tickFormat(function (d) {
-        return "".concat(d, "%");
-      });
+      var yTicks = props.smallChart ? [0, 50, 100] : [0, 25, 50, 75, 100];
+      var yAxis = d3.axisLeft(this.yScale).ticks(5).tickValues(yTicks).tickSize(-20 - width); //.tickFormat((d) => `${d}%`);
+
       var makeLine = d3.line().x(function (d, i) {
         var dateStr = props.dates[i].split(' - ')[1];
-        var dateVal = parseDate(dateStr);
-        return xScale(dateVal);
+
+        var dateVal = _this3.parseDate(dateStr);
+
+        return _this3.xScale(dateVal);
       }).y(function (d) {
-        return yScale(d);
+        return _this3.yScale(d);
       });
       var makeArea = d3.area().x(function (d, i) {
         var dateStr = props.dates[i].split(' - ')[1];
-        var dateVal = parseDate(dateStr);
-        return xScale(dateVal);
+
+        var dateVal = _this3.parseDate(dateStr);
+
+        return _this3.xScale(dateVal);
       }).y0(function (d, i) {
         var moe = Math.sqrt(1.3 / sampleSize[i]) * 100;
-        return yScale(d) + moe;
+        return _this3.yScale(d) + moe;
       }).y1(function (d, i) {
         var moe = Math.sqrt(1.3 / sampleSize[i]) * 100;
-        return yScale(d) - moe;
+        return _this3.yScale(d) - moe;
       });
       var makeVoronoi = d3Voronoi.voronoi().x(function (d, i) {
-        var dateVal = parseDate(d.dateStr);
-        return xScale(dateVal);
+        var dateVal = _this3.parseDate(d.dateStr);
+
+        return _this3.xScale(dateVal);
       }).y(function (d) {
-        return yScale(d.val);
+        return _this3.yScale(d.val);
       }).extent([[0, 0], [width, height]]);
+
+      var _this = this;
+
       var plot = this.selection().appendSelect('svg') // 👈 Use appendSelect instead of append for non-data-bound elements!
-      .attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).appendSelect('g.plot').attr('transform', "translate(".concat(margin.left, ",").concat(margin.top, ")"));
+      .attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).appendSelect('g.plot').classed('small-chart', props.smallChart).attr('transform', "translate(".concat(margin.left, ",").concat(margin.top, ")"));
       var transition = plot.transition().duration(500);
       plot.appendSelect('g.axis.x').attr('transform', "translate(0,".concat(height, ")")).call(xAxis).selectAll('.tick').each(function (d, i, e) {
         var dateStr = d3.timeFormat('%Y-%m-%d')(d);
@@ -205,18 +234,12 @@ var MyChartModule = /*#__PURE__*/function () {
       });
       plot.appendSelect('g.axis.y').attr('transform', "translate(-20,0)").call(yAxis).selectAll('g.tick').classed('mid', function (d) {
         return d === 50;
+      }).classed('zero', function (d) {
+        return d === 0;
       });
       plot.selectAll('g.line-group').data(lineSeries, function (d) {
         return d.id;
       }).join(function (enter) {
-        return onEnter(enter);
-      }, function (update) {
-        return onUpdate(update);
-      }, function (exit) {
-        return onExit(exit);
-      });
-
-      function onEnter(enter) {
         var lineGroup = enter.append('g').attr('class', function (d) {
           return "line-group ".concat(slugify(d.id));
         });
@@ -230,53 +253,16 @@ var MyChartModule = /*#__PURE__*/function () {
         }).style('stroke', function (d) {
           return d.hex;
         });
-        var labelGroup = lineGroup.appendSelect('g.lbl-group').classed('active', true).attr('transform', function (d) {
-          var dateVal = parseDate(endDate);
-          var xPos = xScale(dateVal) + 5;
-          var yPos = yScale(d.values[d.values.length - 1]) + 5;
-          return "translate(".concat(xPos, ",").concat(yPos, ")");
-        });
-        labelGroup.appendSelect('text.lbl-cat.bkgd');
-        labelGroup.appendSelect('text.lbl-cat.fore').style('fill', function (d) {
-          return d.hex;
-        });
-        labelGroup.appendSelect('text.lbl-val.bkgd');
-        labelGroup.appendSelect('text.lbl-val.fore').style('fill', function (d) {
-          return d.hex;
-        });
-        labelGroup.selectAll('text.lbl-cat').text(function (d) {
-          return d.display;
-        });
-        labelGroup.selectAll('text.lbl-val').text(function (d) {
-          return locale.format('.1%')(d.values[d.values.length - 1] / 100);
-        }).attr('y', -15);
-      }
-
-      function onUpdate(update) {
+      }, function (update) {
         update.select('path.moe').transition(transition).attr('d', function (d) {
           return makeArea(d.values);
         });
         update.select('path.line').transition(transition).attr('d', function (d) {
           return makeLine(d.values);
         });
-        update.select('g.lbl-group').transition(transition).attr('transform', function (d) {
-          var dateVal = parseDate(endDate);
-          var xPos = xScale(dateVal) + 5;
-          var yPos = yScale(d.values[d.values.length - 1]) + 5;
-          return "translate(".concat(xPos, ",").concat(yPos, ")");
-        });
-        update.select('g.lbl-group text.lbl-val.fore').text(function (d) {
-          return locale.format('.1%')(d.values[d.values.length - 1] / 100);
-        });
-        update.select('g.lbl-group text.lbl-val.bkgd').text(function (d) {
-          return locale.format('.1%')(d.values[d.values.length - 1] / 100);
-        });
-      }
-
-      function onExit(exit) {
+      }, function (exit) {
         exit.transition(transition).style('opacity', 0).remove();
-      }
-
+      });
       var voronoiGroup = plot.appendSelect('g.voronoi');
       var allVals = [];
       lineSeries.forEach(function (d) {
@@ -285,44 +271,96 @@ var MyChartModule = /*#__PURE__*/function () {
             dateStr: props.dates[i].split(' - ')[1],
             val: dd,
             id: slugify(d.id),
-            hex: d.hex
+            hex: d.hex,
+            display: d.display
           });
+        });
+      });
+      plot.selectAll('g.tt').data(allVals).join(function (enter) {
+        var sel = enter.append('g').attr('class', function (d) {
+          return "tt ".concat(slugify(d.id), " d-").concat(d.dateStr);
+        }).classed('last active', function (d) {
+          return d.dateStr == endDate;
+        }).attr('transform', function (d) {
+          var dateVal = _this.parseDate(d.dateStr);
+
+          var xPos = _this3.xScale(dateVal);
+
+          var yPos = _this3.yScale(d.val);
+
+          return "translate(".concat(xPos, ", ").concat(yPos, ")");
+        });
+        sel.append('circle').attr('r', 5).style('fill', function (d) {
+          return d.hex;
+        });
+        sel.appendSelect('text.val.bkgd');
+        sel.appendSelect('text.val.fore').style('fill', function (d) {
+          return d.hex;
+        });
+        sel.selectAll('text.val').attr('y', function (d) {
+          return d.val > 50 ? -12 : +24;
+        }).text(function (d) {
+          return locale.format('.1%')(d.val / 100);
+        });
+        var lastVal = sel.filter(function (d) {
+          return d.dateStr == endDate;
+        });
+        lastVal.appendSelect('text.cat.bkgd');
+        lastVal.appendSelect('text.cat.fore').style('fill', function (d) {
+          return d.hex;
+        });
+        lastVal.selectAll('text.cat').attr('y', function (d) {
+          return d.val > 50 ? -32 : +40;
+        }).text(function (d) {
+          return d.display;
+        });
+      }, function (update) {
+        update.transition(transition).attr('transform', function (d) {
+          var dateVal = _this.parseDate(d.dateStr);
+
+          var xPos = _this3.xScale(dateVal);
+
+          var yPos = _this3.yScale(d.val);
+
+          return "translate(".concat(xPos, ", ").concat(yPos, ")");
+        });
+        update.select('text.val.bkgd').text(function (d) {
+          return locale.format('.1%')(d.val / 100);
+        }).transition(transition).attr('y', function (d) {
+          return d.val > 50 ? -12 : +24;
+        });
+        update.select('text.val.fore').text(function (d) {
+          return locale.format('.1%')(d.val / 100);
+        }).transition(transition).attr('y', function (d) {
+          return d.val > 50 ? -12 : +24;
+        });
+        var lastVal = update.filter(function (d) {
+          return d.dateStr == endDate;
+        });
+        lastVal.select('text.cat.bkgd').text(function (d) {
+          return d.display;
+        }).transition(transition).attr('y', function (d) {
+          return d.val > 50 ? -32 : +40;
+        });
+        lastVal.select('text.cat.fore').text(function (d) {
+          return d.display;
+        }).transition(transition).attr('y', function (d) {
+          return d.val > 50 ? -32 : +40;
         });
       });
       var vVals = makeVoronoi.polygons(allVals);
       var vPaths = voronoiGroup.selectAll('path').data(vVals).join('path').attr('d', function (d) {
         return d ? 'M' + d.join('L') + 'Z' : null;
       }).style('fill', 'white').style('stroke', 'magenta').style('opacity', 0);
-      var tt = plot.selectAll('g.tt').data(allVals).join('g').attr('class', function (d) {
-        return "tt ".concat(slugify(d.id), " d-").concat(d.dateStr);
-      }).attr('transform', function (d) {
-        var dateVal = parseDate(d.dateStr);
-        var xPos = xScale(dateVal);
-        var yPos = yScale(d.val);
-        return "translate(".concat(xPos, ", ").concat(yPos, ")");
-      });
-      tt.appendSelect('circle').attr('r', 5).style('fill', function (d) {
-        return d.hex;
-      });
-      tt.appendSelect('text.bkgd');
-      tt.appendSelect('text.fore').style('fill', function (d) {
-        return d.hex;
-      });
-      tt.selectAll('text').attr('y', -10).text(function (d) {
-        return locale.format('.1%')(d.val / 100);
-      });
-      vPaths.filter(function (d) {
-        return d.data.dateStr !== endDate;
-      }).on('mouseover', function (event, d) {
-        tt.classed('active', function (t) {
+      vPaths.on('mouseover', function (event, d) {
+        plot.selectAll('g.tt').classed('active', function (t) {
           return t.dateStr === d.data.dateStr;
         });
-        plot.selectAll('g.lbl-group').classed('active', false);
         plot.selectAll('.x.axis .tick').classed('active', false);
         plot.selectAll(".x.axis .tick.d-".concat(d.data.dateStr)).classed('active', true);
       }).on('mouseout', function (d) {
-        tt.classed('active', false);
-        plot.selectAll('g.lbl-group').classed('active', true);
+        plot.selectAll('g.tt').classed('active', false);
+        plot.selectAll('g.tt.last').classed('active', true);
         plot.selectAll('.x.axis .tick').classed('active', function (d, i) {
           return i === 0 || i === allDates.length - 1;
         });

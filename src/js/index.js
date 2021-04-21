@@ -1,18 +1,12 @@
 import * as d3 from 'd3';
 
-import {
-  voronoi
-} from 'd3-voronoi';
+import { voronoi } from 'd3-voronoi';
 
-import {
-  appendSelect
-} from 'd3-appendselect';
+import { appendSelect } from 'd3-appendselect';
 import merge from 'lodash/merge';
 import * as utils from './utils';
 import D3Locale from '@reuters-graphics/d3-locale';
-import {
-  polygonLength
-} from 'd3';
+import { polygonLength } from 'd3';
 
 d3.selection.prototype.appendSelect = appendSelect;
 
@@ -41,14 +35,13 @@ class MyChartModule {
   }
 
   checkLabelOverlap(lineSeries, endDate) {
-
-    let vals = lineSeries.map(d => {
+    let vals = lineSeries
+      .map((d) => {
         let yPos = this.yScale(d.values[d.values.length - 1]);
         console.log(d.id, d.values, yPos);
-        return Object.assign(d, d.yPos = yPos)
+        return Object.assign(d, (d.yPos = yPos));
       })
       .sort((a, b) => a.yPos - b.yPos);
-
 
     let diff = vals[0].yPos - vals[1].yPos;
 
@@ -58,12 +51,11 @@ class MyChartModule {
     }
 
     let obj = {};
-    vals.forEach(d => {
+    vals.forEach((d) => {
       obj[d.id] = d.yPosNew ? d.yPosNew : d.yPos;
     });
 
     return obj;
-
   }
 
   defaultData = [];
@@ -76,8 +68,8 @@ class MyChartModule {
       bottom: 50,
       left: 55,
     },
-    smallChart : false,
-    locale: 'en'
+    smallChart: false,
+    locale: 'en',
   };
 
   /**
@@ -95,14 +87,10 @@ class MyChartModule {
       locale.apStyle();
     }
 
-    const {
-      margin
-    } = props;
+    const { margin } = props;
 
     const container = this.selection().node();
-    const {
-      width: containerWidth
-    } = container.getBoundingClientRect(); // Respect the width of your container!
+    const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
 
     const width = containerWidth - margin.left - margin.right;
     const height =
@@ -140,14 +128,14 @@ class MyChartModule {
       .tickValues(allDates)
       .tickFormat((d) => locale.formatTime('%b %e, %Y')(d));
 
-    let yTicks = props.smallChart ? [0,50,100] : [0, 25, 50, 75, 100];
+    let yTicks = props.smallChart ? [0, 50, 100] : [0, 25, 50, 75, 100];
 
     const yAxis = d3
       .axisLeft(this.yScale)
       .ticks(5)
       .tickValues(yTicks)
-      .tickSize(-20 - width)
-      //.tickFormat((d) => `${d}%`);
+      .tickSize(-20 - width);
+    //.tickFormat((d) => `${d}%`);
 
     const makeLine = d3
       .line()
@@ -216,14 +204,13 @@ class MyChartModule {
       .classed('mid', (d) => d === 50)
       .classed('zero', (d) => d === 0);
 
-
     let lineGroup = plot
       .selectAll('g.line-group')
       .data(lineSeries, (d) => {
         return d.id;
       })
       .join(
-        enter => {
+        (enter) => {
           let lineGroup = enter
             .append('g')
             .attr('class', (d) => `line-group ${utils.slugify(d.id)}`);
@@ -239,7 +226,7 @@ class MyChartModule {
             .style('stroke', (d) => d.hex);
         },
 
-        update => {
+        (update) => {
           update
             .select('path.moe')
             .transition(transition)
@@ -249,10 +236,9 @@ class MyChartModule {
             .select('path.line')
             .transition(transition)
             .attr('d', (d) => makeLine(d.values));
-
         },
 
-        exit => {
+        (exit) => {
           exit.transition(transition).style('opacity', 0).remove();
         }
       );
@@ -261,26 +247,26 @@ class MyChartModule {
 
     let allVals = [];
     lineSeries.forEach((d) => {
-
       d.values.forEach((dd, i) => {
         allVals.push({
           dateStr: props.dates[i].split(' - ')[1],
           val: dd,
           id: utils.slugify(d.id),
           hex: d.hex,
-          display: d.display
+          display: d.display,
         });
       });
-
     });
 
     let tt = plot
       .selectAll('g.tt')
       .data(allVals)
-      .join(enter => {
-          let sel = enter.append('g')
+      .join(
+        (enter) => {
+          let sel = enter
+            .append('g')
             .attr('class', (d) => `tt ${utils.slugify(d.id)} d-${d.dateStr}`)
-            .classed('last active', d => d.dateStr == endDate)
+            .classed('last active', (d) => d.dateStr == endDate)
             .attr('transform', (d) => {
               let dateVal = _this.parseDate(d.dateStr);
               let xPos = this.xScale(dateVal);
@@ -288,33 +274,32 @@ class MyChartModule {
               return `translate(${xPos}, ${yPos})`;
             });
 
-          sel.append('circle')
+          sel
+            .append('circle')
             .attr('r', 5)
             .style('fill', (d) => d.hex);
 
           sel.appendSelect('text.val.bkgd');
           sel.appendSelect('text.val.fore').style('fill', (d) => d.hex);
-          sel.selectAll('text.val')
-            .attr('y', d => d.val > 50 ? -12 : +24)
-            .text((d) => locale.format('.1%')(d.val / 100))
+          sel
+            .selectAll('text.val')
+            .attr('y', (d) => (d.val > 50 ? -12 : +24))
+            .text((d) => locale.format('.1%')(d.val / 100));
 
-          let lastVal = sel.filter(d => {
+          let lastVal = sel.filter((d) => {
             return d.dateStr == endDate;
           });
 
           lastVal.appendSelect('text.cat.bkgd');
           lastVal.appendSelect('text.cat.fore').style('fill', (d) => d.hex);
-          lastVal.selectAll('text.cat')
-            .attr('y', d => d.val > 50 ? -32 : +40)
+          lastVal
+            .selectAll('text.cat')
+            .attr('y', (d) => (d.val > 50 ? -32 : +40))
             .text((d) => {
               return d.display;
-            })
-
-
-
+            });
         },
-        update => {
-
+        (update) => {
           update.transition(transition).attr('transform', (d) => {
             let dateVal = _this.parseDate(d.dateStr);
             let xPos = this.xScale(dateVal);
@@ -322,35 +307,39 @@ class MyChartModule {
             return `translate(${xPos}, ${yPos})`;
           });
 
-          update.select('text.val.bkgd')
+          update
+            .select('text.val.bkgd')
             .text((d) => locale.format('.1%')(d.val / 100))
             .transition(transition)
-            .attr('y', d => {
-              return d.val > 50 ? -12 : +24
-            })
+            .attr('y', (d) => {
+              return d.val > 50 ? -12 : +24;
+            });
 
-          update.select('text.val.fore')
+          update
+            .select('text.val.fore')
             .text((d) => locale.format('.1%')(d.val / 100))
             .transition(transition)
-            .attr('y', d => {
-              return d.val > 50 ? -12 : +24
-            })
+            .attr('y', (d) => {
+              return d.val > 50 ? -12 : +24;
+            });
 
-          let lastVal = update.filter(d => {
+          let lastVal = update.filter((d) => {
             return d.dateStr == endDate;
-          })
+          });
 
-          lastVal.select('text.cat.bkgd')
-            .text(d => d.display)
+          lastVal
+            .select('text.cat.bkgd')
+            .text((d) => d.display)
             .transition(transition)
-            .attr('y', d => d.val > 50 ? -32 : +40)
+            .attr('y', (d) => (d.val > 50 ? -32 : +40));
 
-          lastVal.select('text.cat.fore')
-            .text(d => d.display)
+          lastVal
+            .select('text.cat.fore')
+            .text((d) => d.display)
             .transition(transition)
-            .attr('y', d => d.val > 50 ? -32 : +40)
+            .attr('y', (d) => (d.val > 50 ? -32 : +40));
         }
-      )
+      );
 
     let vVals = makeVoronoi.polygons(allVals);
 
@@ -367,7 +356,6 @@ class MyChartModule {
 
     vPaths
       .on('mouseover', function (event, d) {
-
         plot.selectAll('g.tt').classed('active', (t) => {
           return t.dateStr === d.data.dateStr;
         });
@@ -376,8 +364,6 @@ class MyChartModule {
         plot
           .selectAll(`.x.axis .tick.d-${d.data.dateStr}`)
           .classed('active', true);
-
-
       })
       .on('mouseout', (d) => {
         plot.selectAll('g.tt').classed('active', false);
