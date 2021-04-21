@@ -34,28 +34,21 @@ class MyChartModule {
     return this;
   }
 
-  checkLabelOverlap(lineSeries, endDate) {
-    let vals = lineSeries
-      .map((d) => {
-        let yPos = this.yScale(d.values[d.values.length - 1]);
-        console.log(d.id, d.values, yPos);
-        return Object.assign(d, (d.yPos = yPos));
-      })
-      .sort((a, b) => a.yPos - b.yPos);
-
-    let diff = vals[0].yPos - vals[1].yPos;
-
-    if (Math.abs(diff) < 30) {
-      vals[0].yPosNew = vals[0].yPos - (30 - Math.abs(diff));
-      vals[1].yPosNew = vals[1].yPos + (20 - Math.abs(diff));
-    }
-
-    let obj = {};
-    vals.forEach((d) => {
-      obj[d.id] = d.yPosNew ? d.yPosNew : d.yPos;
+  rankVals(lineSeries, props) {
+    let byDate = {};
+    lineSeries.forEach((d) => {
+      d.values.forEach((v, i) => {
+        let dateStr = props.dates[i].split(' - ')[1];
+        byDate[dateStr] = byDate[dateStr] ? byDate[dateStr] : [];
+        byDate[dateStr].push(v);
+      });
     });
 
-    return obj;
+    Object.keys(byDate).forEach((key) => {
+      byDate[key] = d3.max(byDate[key]);
+    });
+
+    return byDate;
   }
 
   defaultData = [];
@@ -92,6 +85,9 @@ class MyChartModule {
     const container = this.selection().node();
     const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
 
+    margin.left = props.smallChart ? 30 : margin.left;
+    margin.right = props.smallChart ? 30 : margin.right;
+
     const width = containerWidth - margin.left - margin.right;
     const height =
       containerWidth * props.aspectHeight - margin.top - margin.bottom;
@@ -114,6 +110,7 @@ class MyChartModule {
     let startDate = props.dates[0].split(' - ')[1];
     let endDate = props.dates[props.dates.length - 1].split(' - ')[1];
     let allDates = props.dates.map((d) => this.parseDate(d.split(' - ')[1]));
+    let rankedVals = this.rankVals(lineSeries, props);
     let xDom = [this.parseDate(startDate), this.parseDate(endDate)];
     let yDom = [0, 100];
 
@@ -129,7 +126,7 @@ class MyChartModule {
       .tickFormat((d) => locale.formatTime('%b %e, %Y')(d));
 
     let yTicks = props.smallChart ? [0, 50, 100] : [0, 25, 50, 75, 100];
-    let yTickSize = props.smallChart ? -20 - width : -20;
+    let yTickSize = props.smallChart ? -10 - width : -10;
 
     const yAxis = d3
       .axisLeft(this.yScale)
@@ -140,6 +137,7 @@ class MyChartModule {
 
     const makeLine = d3
       .line()
+      .curve(d3.curveCatmullRom.alpha(1))
       .x((d, i) => {
         let dateStr = props.dates[i].split(' - ')[1];
         let dateVal = this.parseDate(dateStr);
@@ -149,6 +147,7 @@ class MyChartModule {
 
     const makeArea = d3
       .area()
+      .curve(d3.curveCatmullRom.alpha(1))
       .x((d, i) => {
         let dateStr = props.dates[i].split(' - ')[1];
         let dateVal = this.parseDate(dateStr);
@@ -254,10 +253,10 @@ class MyChartModule {
     let voronoiGroup = plot.appendSelect('g.voronoi');
 
     let allVals = [];
-    lineSeries.forEach((d) => {
-      d.values.forEach((dd, i) => {
+    lineSeries.forEach((d, i) => {
+      d.values.forEach((dd, ii) => {
         allVals.push({
-          dateStr: props.dates[i].split(' - ')[1],
+          dateStr: props.dates[ii].split(' - ')[1],
           val: dd,
           id: utils.slugify(d.id),
           hex: d.hex,
@@ -265,6 +264,31 @@ class MyChartModule {
         });
       });
     });
+
+    let labelOffset = (d, type) => {
+      let isHighest = rankedVals[d.dateStr] == d.val;
+
+      let pos = {
+        cat: {
+          top: -32,
+          bot: 40,
+        },
+        val: {
+          top: -12,
+          bot: 24,
+        },
+      };
+
+      if (isHighest && d.val < 80) {
+        return pos[type].top;
+      } else if (isHighest && d.val >= 80) {
+        return pos[type].bot;
+      } else if (!isHighest && d.val < 20) {
+        return pos[type].top;
+      } else {
+        return pos[type].bot;
+      }
+    };
 
     let tt = plot
       .selectAll('g.tt')
@@ -291,8 +315,8 @@ class MyChartModule {
           sel.appendSelect('text.val.fore').style('fill', (d) => d.hex);
           sel
             .selectAll('text.val')
-            .attr('y', (d) => (d.val > 50 ? -12 : +24))
-            .text((d) => locale.format('.1%')(d.val / 100));
+            .attr('y', (d) => labelOffset(d, 'val'))
+            .text((d) => locale.format('.0%')(d.val / 100));
 
           let lastVal = sel.filter((d) => {
             return d.dateStr == endDate;
@@ -302,7 +326,7 @@ class MyChartModule {
           lastVal.appendSelect('text.cat.fore').style('fill', (d) => d.hex);
           lastVal
             .selectAll('text.cat')
-            .attr('y', (d) => (d.val > 50 ? -32 : +40))
+            .attr('y', (d) => labelOffset(d, 'cat'))
             .text((d) => {
               return d.display;
             });
@@ -319,17 +343,13 @@ class MyChartModule {
             .select('text.val.bkgd')
             .text((d) => locale.format('.1%')(d.val / 100))
             .transition(transition)
-            .attr('y', (d) => {
-              return d.val > 50 ? -12 : +24;
-            });
+            .attr('y', (d) => labelOffset(d, 'val'));
 
           update
             .select('text.val.fore')
             .text((d) => locale.format('.1%')(d.val / 100))
             .transition(transition)
-            .attr('y', (d) => {
-              return d.val > 50 ? -12 : +24;
-            });
+            .attr('y', (d) => labelOffset(d, 'val'));
 
           let lastVal = update.filter((d) => {
             return d.dateStr == endDate;
@@ -339,13 +359,13 @@ class MyChartModule {
             .select('text.cat.bkgd')
             .text((d) => d.display)
             .transition(transition)
-            .attr('y', (d) => (d.val > 50 ? -32 : +40));
+            .attr('y', (d) => labelOffset(d, 'cat'));
 
           lastVal
             .select('text.cat.fore')
             .text((d) => d.display)
             .transition(transition)
-            .attr('y', (d) => (d.val > 50 ? -32 : +40));
+            .attr('y', (d) => labelOffset(d, 'cat'));
         }
       );
 
