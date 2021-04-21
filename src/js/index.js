@@ -341,13 +341,13 @@ class MyChartModule {
 
           update
             .select('text.val.bkgd')
-            .text((d) => locale.format('.1%')(d.val / 100))
+            .text((d) => locale.format('.0%')(d.val / 100))
             .transition(transition)
             .attr('y', (d) => labelOffset(d, 'val'));
 
           update
             .select('text.val.fore')
-            .text((d) => locale.format('.1%')(d.val / 100))
+            .text((d) => locale.format('.0%')(d.val / 100))
             .transition(transition)
             .attr('y', (d) => labelOffset(d, 'val'));
 
