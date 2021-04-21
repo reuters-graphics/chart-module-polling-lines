@@ -1,7 +1,7 @@
 {
   "inputs": {
     "dist/scss/demo.css": {
-      "bytes": 310600,
+      "bytes": 310750,
       "imports": []
     },
     "dist/demo/App/App.svelte.css": {
@@ -383,10 +383,10 @@
       "imports": [],
       "inputs": {
         "dist/scss/demo.css": {
-          "bytesInOutput": 252392
+          "bytesInOutput": 252525
         }
       },
-      "bytes": 252410
+      "bytes": 252543
     },
     "../~~bundle~~/dist/demo/App/index.js": {
       "imports": [],

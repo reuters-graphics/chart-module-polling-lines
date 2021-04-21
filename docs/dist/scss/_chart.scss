@@ -11,6 +11,12 @@ $LineChart-container: '#polls-line-chart-container' !default;
 
     pointer-events: none;
 
+    g.tt {
+      text {
+        font-size: .875rem;
+      }
+    }
+
     .x.axis .tick {
       display: none;
     }
@@ -113,9 +119,7 @@ $LineChart-container: '#polls-line-chart-container' !default;
 
     &.active {
       display: block;
-    }
-
-    ;
+    };
 
     circle {
       stroke: white;
@@ -124,9 +128,14 @@ $LineChart-container: '#polls-line-chart-container' !default;
 
     text {
       text-anchor: middle;
+
+      &.val {
+        font-weight: 600;
+      };
     }
 
   }
+  
 
 
 }
