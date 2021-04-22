@@ -238,7 +238,7 @@ var MyChartModule = /*#__PURE__*/function () {
       }).selectAll('.tick text');
       plot.selectAll('g.axis.y .tick').filter(function (d) {
         return d !== 100;
-      }).selectAll('text').attr('x', -12);
+      }).selectAll('text').attr('x', -6);
       plot.appendSelect('line.zero').attr('x1', -20).attr('x2', width).attr('y1', this.yScale(0)).attr('y2', this.yScale(0)).raise();
       plot.selectAll('g.line-group').data(lineSeries, function (d) {
         return d.id;
