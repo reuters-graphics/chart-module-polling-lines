@@ -34,6 +34,7 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
   * No category labels on lines.
   * No mouseover interactions.
   * Ticks extend full width on small charts only.
+`fixedHeight` : (Integer) Chart height. If not present, height defaults to aspect ratio of 70% of the width.
 
 ### Example usage: 
 
@@ -67,7 +68,8 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
     }],
     selected: 'Respondents:AllRespondents',
     locale: 'de',
-    smallChart: false
+    smallChart: false,
+    fixedHeight: 400
     };
 
   const chart = new LineChart();
