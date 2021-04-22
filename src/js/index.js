@@ -219,7 +219,7 @@ class MyChartModule {
       .selectAll('g.axis.y .tick')
       .filter((d) => d !== 100)
       .selectAll('text')
-      .attr('x', -12);
+      .attr('x', -6);
 
     plot
       .appendSelect('line.zero')
