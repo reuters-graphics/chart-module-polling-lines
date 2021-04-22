@@ -25,6 +25,14 @@ $LineChart-container: '#polls-line-chart-container' !default;
       display: none;
     }
 
+    g.lbl-100 text {
+      font-size: .8rem;
+      
+      &.fore {
+        fill: $gray-400;
+      }
+    }
+
     .tt text.cat {
       display: none;
     }
@@ -42,7 +50,6 @@ $LineChart-container: '#polls-line-chart-container' !default;
     }
 
     .tick {
-
 
       line,
       path {
@@ -112,6 +119,7 @@ $LineChart-container: '#polls-line-chart-container' !default;
     }
   }
 
+  
 
   g.tt {
     display: none;

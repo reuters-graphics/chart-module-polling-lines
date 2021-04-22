@@ -1,18 +1,12 @@
 import * as d3 from 'd3';
 
-import {
-  voronoi
-} from 'd3-voronoi';
+import { voronoi } from 'd3-voronoi';
 
-import {
-  appendSelect
-} from 'd3-appendselect';
+import { appendSelect } from 'd3-appendselect';
 import merge from 'lodash/merge';
 import * as utils from './utils';
 import D3Locale from '@reuters-graphics/d3-locale';
-import {
-  polygonLength
-} from 'd3';
+import { polygonLength } from 'd3';
 
 d3.selection.prototype.appendSelect = appendSelect;
 
@@ -86,14 +80,10 @@ class MyChartModule {
       locale.apStyle();
     }
 
-    const {
-      margin
-    } = props;
+    const { margin } = props;
 
     const container = this.selection().node();
-    const {
-      width: containerWidth
-    } = container.getBoundingClientRect(); // Respect the width of your container!
+    const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
 
     margin.left = props.smallChart ? 30 : margin.left;
     margin.right = props.smallChart ? 18 : margin.right;
@@ -228,18 +218,19 @@ class MyChartModule {
       .selectAll('.tick text');
 
     if (props.smallChart) {
-      let lbl100 = plot.appendSelect('g.lbl-100')
-        .attr('transform', `translate(-20,${this.yScale(100) + 4})`)
+      let lbl100 = plot
+        .appendSelect('g.lbl-100')
+        .attr('transform', `translate(-20,${this.yScale(100) + 4})`);
 
-      lbl100.appendSelect('rect')
+      lbl100
+        .appendSelect('rect')
         .attr('width', 40)
         .attr('height', 20)
         .attr('y', -13)
         .attr('x', -4)
         .style('fill', 'white');
-      
-      lbl100.appendSelect('text.fore').text('100%');
 
+      lbl100.appendSelect('text.fore').text('100%');
     }
 
     plot

@@ -1,7 +1,7 @@
 {
   "inputs": {
     "dist/scss/demo.css": {
-      "bytes": 310750,
+      "bytes": 310925,
       "imports": []
     },
     "dist/demo/App/App.svelte.css": {
@@ -274,7 +274,7 @@
       ]
     },
     "dist/js/index.js": {
-      "bytes": 11923,
+      "bytes": 12481,
       "imports": [
         {
           "path": "_snowpack/pkg/d3.js",
@@ -311,7 +311,7 @@
       "imports": []
     },
     "dist/demo/Chart.svelte.js": {
-      "bytes": 9160,
+      "bytes": 9128,
       "imports": [
         {
           "path": "_snowpack/pkg/svelte/internal.js",
@@ -383,10 +383,10 @@
       "imports": [],
       "inputs": {
         "dist/scss/demo.css": {
-          "bytesInOutput": 252525
+          "bytesInOutput": 252683
         }
       },
-      "bytes": 252543
+      "bytes": 252701
     },
     "../~~bundle~~/dist/demo/App/index.js": {
       "imports": [],
@@ -431,7 +431,7 @@
           "bytesInOutput": 381
         },
         "_snowpack/pkg/svelte-highlight.js": {
-          "bytesInOutput": 14596
+          "bytesInOutput": 14590
         },
         "_snowpack/pkg/svelte-highlight/languages.js": {
           "bytesInOutput": 876881
@@ -458,7 +458,7 @@
           "bytesInOutput": 4501
         },
         "_snowpack/pkg/common/isoParse-ea4cc06e.js": {
-          "bytesInOutput": 12353
+          "bytesInOutput": 12355
         },
         "_snowpack/pkg/d3.js": {
           "bytesInOutput": 125567
@@ -482,13 +482,13 @@
           "bytesInOutput": 10923
         },
         "dist/js/index.js": {
-          "bytesInOutput": 5699
+          "bytesInOutput": 6041
         },
         "dist/js/test-data.json.proxy.js": {
           "bytesInOutput": 23087
         },
         "dist/demo/Chart.svelte.js": {
-          "bytesInOutput": 3061
+          "bytesInOutput": 3034
         },
         "dist/demo/App/App.svelte.js": {
           "bytesInOutput": 893
@@ -497,7 +497,7 @@
           "bytesInOutput": 44
         }
       },
-      "bytes": 1331248
+      "bytes": 1331559
     },
     "../~~bundle~~/dist/demo/App/index.css": {
       "imports": [],

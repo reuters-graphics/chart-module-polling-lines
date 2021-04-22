@@ -151,8 +151,8 @@ var MyChartModule = /*#__PURE__*/function () {
           containerWidth = _container$getBoundin.width; // Respect the width of your container!
 
 
-      margin.left = props.smallChart ? 0 : margin.left;
-      margin.right = props.smallChart ? 30 : margin.right;
+      margin.left = props.smallChart ? 30 : margin.left;
+      margin.right = props.smallChart ? 18 : margin.right;
       var width = containerWidth - margin.left - margin.right;
       var height = containerWidth * props.aspectHeight - margin.top - margin.bottom;
 
@@ -187,7 +187,7 @@ var MyChartModule = /*#__PURE__*/function () {
         return locale.formatTime('%b %e, %Y')(d);
       });
       var yTicks = props.smallChart ? [0, 50, 100] : [0, 25, 50, 75, 100];
-      var yTickSize = props.smallChart ? -12 - width : -12;
+      var yTickSize = props.smallChart ? -width - 20 : -12;
       var yAxis = d3.axisLeft(this.yScale).ticks(5).tickValues(yTicks).tickSize(yTickSize).tickFormat(function (d) {
         return d == 100 ? "".concat(d, "%") : d;
       });
@@ -233,13 +233,23 @@ var MyChartModule = /*#__PURE__*/function () {
       }).classed('active', function (d, i) {
         return i === 0 || i === allDates.length - 1;
       });
+      props.smallChart ? -20 : -20;
       plot.appendSelect('g.axis.y').attr('transform', "translate(-20,0)").call(yAxis).selectAll('g.tick').classed('mid', function (d) {
         return d === 50;
       }).selectAll('.tick text');
+
+      if (props.smallChart) {
+        var lbl100 = plot.appendSelect('g.lbl-100').attr('transform', "translate(-20,".concat(this.yScale(100) + 4, ")"));
+        lbl100.appendSelect('rect').attr('width', 40).attr('height', 20).attr('y', -13).attr('x', -4).style('fill', 'white');
+        lbl100.appendSelect('text.fore').text('100%');
+      }
+
       plot.selectAll('g.axis.y .tick').filter(function (d) {
         return d !== 100;
       }).selectAll('text').attr('x', -6);
-      plot.appendSelect('line.zero').attr('x1', -20).attr('x2', width).attr('y1', this.yScale(0)).attr('y2', this.yScale(0)).raise();
+      var zx1 = props.smallChart ? -20 : -20;
+      var zx2 = props.smallChart ? Math.abs(yTickSize) - 20 : width;
+      plot.appendSelect('line.zero').attr('x1', zx1).attr('x2', zx2).attr('y1', this.yScale(0)).attr('y2', this.yScale(0)).raise();
       plot.selectAll('g.line-group').data(lineSeries, function (d) {
         return d.id;
       }).join(function (enter) {
