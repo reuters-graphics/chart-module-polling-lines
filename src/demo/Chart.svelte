@@ -45,7 +45,6 @@ Follow the notes below! -->
     };
 
   afterUpdate(() => {
-    console.log('afterUpdate');
 
     // 💪 Create a new chart instance of your module.
     chart = new LineChart();

@@ -1,12 +1,18 @@
 import * as d3 from 'd3';
 
-import { voronoi } from 'd3-voronoi';
+import {
+  voronoi
+} from 'd3-voronoi';
 
-import { appendSelect } from 'd3-appendselect';
+import {
+  appendSelect
+} from 'd3-appendselect';
 import merge from 'lodash/merge';
 import * as utils from './utils';
 import D3Locale from '@reuters-graphics/d3-locale';
-import { polygonLength } from 'd3';
+import {
+  polygonLength
+} from 'd3';
 
 d3.selection.prototype.appendSelect = appendSelect;
 
@@ -80,13 +86,17 @@ class MyChartModule {
       locale.apStyle();
     }
 
-    const { margin } = props;
+    const {
+      margin
+    } = props;
 
     const container = this.selection().node();
-    const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
+    const {
+      width: containerWidth
+    } = container.getBoundingClientRect(); // Respect the width of your container!
 
-    margin.left = props.smallChart ? 0 : margin.left;
-    margin.right = props.smallChart ? 30 : margin.right;
+    margin.left = props.smallChart ? 30 : margin.left;
+    margin.right = props.smallChart ? 18 : margin.right;
 
     const width = containerWidth - margin.left - margin.right;
     let height =
@@ -130,7 +140,7 @@ class MyChartModule {
       .tickFormat((d) => locale.formatTime('%b %e, %Y')(d));
 
     let yTicks = props.smallChart ? [0, 50, 100] : [0, 25, 50, 75, 100];
-    let yTickSize = props.smallChart ? -12 - width : -12;
+    let yTickSize = props.smallChart ? -width - 20 : -12;
 
     const yAxis = d3
       .axisLeft(this.yScale)
@@ -207,6 +217,8 @@ class MyChartModule {
       })
       .classed('active', (d, i) => i === 0 || i === allDates.length - 1);
 
+    let yAxisPos = props.smallChart ? -20 : -20;
+
     plot
       .appendSelect('g.axis.y')
       .attr('transform', `translate(-20,0)`)
@@ -215,16 +227,34 @@ class MyChartModule {
       .classed('mid', (d) => d === 50)
       .selectAll('.tick text');
 
+    if (props.smallChart) {
+      let lbl100 = plot.appendSelect('g.lbl-100')
+        .attr('transform', `translate(-20,${this.yScale(100) + 4})`)
+
+      lbl100.appendSelect('rect')
+        .attr('width', 40)
+        .attr('height', 20)
+        .attr('y', -13)
+        .attr('x', -4)
+        .style('fill', 'white');
+      
+      lbl100.appendSelect('text.fore').text('100%');
+
+    }
+
     plot
       .selectAll('g.axis.y .tick')
       .filter((d) => d !== 100)
       .selectAll('text')
       .attr('x', -6);
 
+    let zx1 = props.smallChart ? -20 : -20;
+    let zx2 = props.smallChart ? Math.abs(yTickSize) - 20 : width;
+
     plot
       .appendSelect('line.zero')
-      .attr('x1', -20)
-      .attr('x2', width)
+      .attr('x1', zx1)
+      .attr('x2', zx2)
       .attr('y1', this.yScale(0))
       .attr('y2', this.yScale(0))
       .raise();
