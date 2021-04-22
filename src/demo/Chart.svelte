@@ -41,7 +41,7 @@ Follow the notes below! -->
     selected: defaultKey,
     locale: 'en',
     smallChart: false,
-    fixedHeight: 200
+    fixedHeight: 400
     };
 
   afterUpdate(() => {
