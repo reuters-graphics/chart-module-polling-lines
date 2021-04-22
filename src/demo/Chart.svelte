@@ -40,7 +40,8 @@ Follow the notes below! -->
     }],
     selected: defaultKey,
     locale: 'en',
-    smallChart: false
+    smallChart: false,
+    fixedHeight: 200
     };
 
   afterUpdate(() => {
@@ -74,8 +75,6 @@ Follow the notes below! -->
   function getVal() {
     chartProps.selected = document.getElementById('dropdown').value;
     chartData = testData.demographics[chartProps.selected];
-
-    console.log('getVal');
   }
 </script>
 

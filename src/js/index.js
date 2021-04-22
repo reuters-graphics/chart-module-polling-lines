@@ -1,12 +1,18 @@
 import * as d3 from 'd3';
 
-import { voronoi } from 'd3-voronoi';
+import {
+  voronoi
+} from 'd3-voronoi';
 
-import { appendSelect } from 'd3-appendselect';
+import {
+  appendSelect
+} from 'd3-appendselect';
 import merge from 'lodash/merge';
 import * as utils from './utils';
 import D3Locale from '@reuters-graphics/d3-locale';
-import { polygonLength } from 'd3';
+import {
+  polygonLength
+} from 'd3';
 
 d3.selection.prototype.appendSelect = appendSelect;
 
@@ -59,10 +65,10 @@ class MyChartModule {
       top: 20,
       right: 60,
       bottom: 50,
-      left: 55,
+      left: 58,
     },
     smallChart: false,
-    locale: 'en',
+    locale: 'en'
   };
 
   /**
@@ -80,17 +86,24 @@ class MyChartModule {
       locale.apStyle();
     }
 
-    const { margin } = props;
+    const {
+      margin
+    } = props;
 
     const container = this.selection().node();
-    const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
+    const {
+      width: containerWidth
+    } = container.getBoundingClientRect(); // Respect the width of your container!
 
     margin.left = props.smallChart ? 0 : margin.left;
     margin.right = props.smallChart ? 30 : margin.right;
 
     const width = containerWidth - margin.left - margin.right;
-    const height =
-      containerWidth * props.aspectHeight - margin.top - margin.bottom;
+    let height = containerWidth * props.aspectHeight - margin.top - margin.bottom;
+
+    if (props.fixedHeight) {
+      height = props.fixedHeight - margin.top - margin.bottom;
+    }
 
     this.parseDate = d3.timeParse('%Y-%m-%d');
 
@@ -126,14 +139,14 @@ class MyChartModule {
       .tickFormat((d) => locale.formatTime('%b %e, %Y')(d));
 
     let yTicks = props.smallChart ? [0, 50, 100] : [0, 25, 50, 75, 100];
-    let yTickSize = props.smallChart ? -10 - width : -10;
+    let yTickSize = props.smallChart ? -12 - width : -12;
 
     const yAxis = d3
       .axisLeft(this.yScale)
       .ticks(5)
       .tickValues(yTicks)
-      .tickSize(yTickSize);
-    //.tickFormat((d) => `${d}%`);
+      .tickSize(yTickSize)
+      .tickFormat((d) => d == 100 ? `${d}%` : d);
 
     const makeLine = d3
       .line()
@@ -183,6 +196,15 @@ class MyChartModule {
       .classed('small-chart', props.smallChart)
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    
+    const clipPath = plot.appendSelect("clipPath")
+      .attr("id", "clip")
+      .append("rect")
+      .attr('width', width)
+      .attr('height', height);
+
+
+
     const transition = plot.transition().duration(500);
 
     plot
@@ -196,13 +218,20 @@ class MyChartModule {
       })
       .classed('active', (d, i) => i === 0 || i === allDates.length - 1);
 
+      
     plot
       .appendSelect('g.axis.y')
       .attr('transform', `translate(-20,0)`)
       .call(yAxis)
       .selectAll('g.tick')
-      .classed('mid', (d) => d === 50);
+      .classed('mid', (d) => d === 50)
+      .selectAll('.tick text')
 
+    plot.selectAll('g.axis.y .tick')
+      .filter(d => d !== 100)
+      .selectAll('text')
+      .attr('x', -12)
+      
     plot
       .appendSelect('line.zero')
       .attr('x1', -20)
@@ -220,7 +249,8 @@ class MyChartModule {
         (enter) => {
           let lineGroup = enter
             .append('g')
-            .attr('class', (d) => `line-group ${utils.slugify(d.id)}`);
+            .attr('class', (d) => `line-group ${utils.slugify(d.id)}`)
+            .attr("clip-path","url(#clip)");
 
           lineGroup
             .appendSelect('path.moe')
