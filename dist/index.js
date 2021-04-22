@@ -79,7 +79,7 @@ var MyChartModule = /*#__PURE__*/function () {
         top: 20,
         right: 60,
         bottom: 50,
-        left: 55
+        left: 58
       },
       smallChart: false,
       locale: 'en'
@@ -155,6 +155,11 @@ var MyChartModule = /*#__PURE__*/function () {
       margin.right = props.smallChart ? 30 : margin.right;
       var width = containerWidth - margin.left - margin.right;
       var height = containerWidth * props.aspectHeight - margin.top - margin.bottom;
+
+      if (props.fixedHeight) {
+        height = props.fixedHeight - margin.top - margin.bottom;
+      }
+
       this.parseDate = d3.timeParse('%Y-%m-%d');
       var lineSeries = props.lineVars.map(function (v) {
         return {
@@ -182,9 +187,10 @@ var MyChartModule = /*#__PURE__*/function () {
         return locale.formatTime('%b %e, %Y')(d);
       });
       var yTicks = props.smallChart ? [0, 50, 100] : [0, 25, 50, 75, 100];
-      var yTickSize = props.smallChart ? -10 - width : -10;
-      var yAxis = d3.axisLeft(this.yScale).ticks(5).tickValues(yTicks).tickSize(yTickSize); //.tickFormat((d) => `${d}%`);
-
+      var yTickSize = props.smallChart ? -12 - width : -12;
+      var yAxis = d3.axisLeft(this.yScale).ticks(5).tickValues(yTicks).tickSize(yTickSize).tickFormat(function (d) {
+        return d == 100 ? "".concat(d, "%") : d;
+      });
       var makeLine = d3.line().curve(d3.curveCatmullRom.alpha(1)).x(function (d, i) {
         var dateStr = props.dates[i].split(' - ')[1];
 
@@ -219,6 +225,7 @@ var MyChartModule = /*#__PURE__*/function () {
 
       var plot = this.selection().appendSelect('svg') // 👈 Use appendSelect instead of append for non-data-bound elements!
       .attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).appendSelect('g.plot').classed('small-chart', props.smallChart).attr('transform', "translate(".concat(margin.left, ",").concat(margin.top, ")"));
+      plot.appendSelect('clipPath').attr('id', 'clip').append('rect').attr('width', width).attr('height', height);
       var transition = plot.transition().duration(500);
       plot.appendSelect('g.axis.x').attr('transform', "translate(0,".concat(height, ")")).call(xAxis).selectAll('.tick').each(function (d, i, e) {
         var dateStr = d3.timeFormat('%Y-%m-%d')(d);
@@ -228,14 +235,17 @@ var MyChartModule = /*#__PURE__*/function () {
       });
       plot.appendSelect('g.axis.y').attr('transform', "translate(-20,0)").call(yAxis).selectAll('g.tick').classed('mid', function (d) {
         return d === 50;
-      });
+      }).selectAll('.tick text');
+      plot.selectAll('g.axis.y .tick').filter(function (d) {
+        return d !== 100;
+      }).selectAll('text').attr('x', -12);
       plot.appendSelect('line.zero').attr('x1', -20).attr('x2', width).attr('y1', this.yScale(0)).attr('y2', this.yScale(0)).raise();
       plot.selectAll('g.line-group').data(lineSeries, function (d) {
         return d.id;
       }).join(function (enter) {
         var lineGroup = enter.append('g').attr('class', function (d) {
           return "line-group ".concat(slugify(d.id));
-        });
+        }).attr('clip-path', 'url(#clip)');
         lineGroup.appendSelect('path.moe').attr('d', function (d) {
           return makeArea(d.values);
         }).style('fill', function (d) {
