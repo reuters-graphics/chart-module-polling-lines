@@ -320,14 +320,11 @@ var MyChartModule = /*#__PURE__*/function () {
         }).text(function (d) {
           return locale.format('.0%')(d.val / 100);
         });
-        var lastVal = sel.filter(function (d) {
-          return d.dateStr == endDate;
-        });
-        lastVal.appendSelect('text.cat.bkgd');
-        lastVal.appendSelect('text.cat.fore').style('fill', function (d) {
+        sel.appendSelect('text.cat.bkgd');
+        sel.appendSelect('text.cat.fore').style('fill', function (d) {
           return d.hex;
         });
-        lastVal.selectAll('text.cat').attr('y', function (d) {
+        sel.selectAll('text.cat').attr('y', function (d) {
           return labelOffset(d, 'cat');
         }).text(function (d) {
           return d.display;
@@ -352,15 +349,12 @@ var MyChartModule = /*#__PURE__*/function () {
         }).transition(transition).attr('y', function (d) {
           return labelOffset(d, 'val');
         });
-        var lastVal = update.filter(function (d) {
-          return d.dateStr == endDate;
-        });
-        lastVal.select('text.cat.bkgd').text(function (d) {
+        update.select('text.cat.bkgd').text(function (d) {
           return d.display;
         }).transition(transition).attr('y', function (d) {
           return labelOffset(d, 'cat');
         });
-        lastVal.select('text.cat.fore').text(function (d) {
+        update.select('text.cat.fore').text(function (d) {
           return d.display;
         }).transition(transition).attr('y', function (d) {
           return labelOffset(d, 'cat');

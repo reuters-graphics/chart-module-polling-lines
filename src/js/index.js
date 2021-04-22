@@ -318,7 +318,6 @@ class MyChartModule {
             .attr('y', (d) => labelOffset(d, 'val'))
             .text((d) => locale.format('.0%')(d.val / 100));
 
-
           sel.appendSelect('text.cat.bkgd');
           sel.appendSelect('text.cat.fore').style('fill', (d) => d.hex);
           sel
@@ -347,7 +346,6 @@ class MyChartModule {
             .text((d) => locale.format('.0%')(d.val / 100))
             .transition(transition)
             .attr('y', (d) => labelOffset(d, 'val'));
-
 
           update
             .select('text.cat.bkgd')

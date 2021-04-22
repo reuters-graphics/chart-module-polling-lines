@@ -274,7 +274,7 @@
       ]
     },
     "dist/js/index.js": {
-      "bytes": 11661,
+      "bytes": 11444,
       "imports": [
         {
           "path": "_snowpack/pkg/d3.js",
@@ -311,7 +311,7 @@
       "imports": []
     },
     "dist/demo/Chart.svelte.js": {
-      "bytes": 9164,
+      "bytes": 9165,
       "imports": [
         {
           "path": "_snowpack/pkg/svelte/internal.js",
@@ -419,7 +419,7 @@
           "bytesInOutput": 1018
         },
         "dist/demo/App/ChartContainer.svelte.js": {
-          "bytesInOutput": 2534
+          "bytesInOutput": 2537
         },
         "_snowpack/pkg/svelte.js": {
           "bytesInOutput": 0
@@ -449,22 +449,22 @@
           "bytesInOutput": 0
         },
         "_snowpack/pkg/svelte-json-tree.js": {
-          "bytesInOutput": 22566
+          "bytesInOutput": 22571
         },
         "dist/demo/App/Explorer.svelte.js": {
           "bytesInOutput": 761
         },
         "_snowpack/pkg/common/locale-27ba713c.js": {
-          "bytesInOutput": 4489
+          "bytesInOutput": 4491
         },
         "_snowpack/pkg/common/isoParse-ea4cc06e.js": {
           "bytesInOutput": 12355
         },
         "_snowpack/pkg/d3.js": {
-          "bytesInOutput": 125540
+          "bytesInOutput": 125567
         },
         "_snowpack/pkg/d3-voronoi.js": {
-          "bytesInOutput": 9200
+          "bytesInOutput": 9203
         },
         "_snowpack/pkg/d3-appendselect.js": {
           "bytesInOutput": 919
@@ -482,7 +482,7 @@
           "bytesInOutput": 10923
         },
         "dist/js/index.js": {
-          "bytesInOutput": 5507
+          "bytesInOutput": 5380
         },
         "dist/js/test-data.json.proxy.js": {
           "bytesInOutput": 23087
@@ -497,7 +497,7 @@
           "bytesInOutput": 44
         }
       },
-      "bytes": 1331010
+      "bytes": 1330923
     },
     "../~~bundle~~/dist/demo/App/index.css": {
       "imports": [],
