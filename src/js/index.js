@@ -158,12 +158,12 @@ class MyChartModule {
         return this.xScale(dateVal);
       })
       .y0((d, i) => {
-        let moe = Math.sqrt(1.3 / sampleSize[i]) * 100;
-        return this.yScale(d) + moe;
+        let confInterval = Math.sqrt(1.3 / sampleSize[i]) * 100;
+        return this.yScale(d + confInterval); //FIXED TO ADD CI TO VALUE PASSED TO YSCALE
       })
       .y1((d, i) => {
-        let moe = Math.sqrt(1.3 / sampleSize[i]) * 100;
-        return this.yScale(d) - moe;
+        let confInterval = Math.sqrt(1.3 / sampleSize[i]) * 100;
+        return this.yScale(d - confInterval); //FIXED TO ADD CI TO VALUE PASSED TO YSCALE
       });
 
     const makeVoronoi = voronoi()

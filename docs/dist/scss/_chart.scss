@@ -3,6 +3,9 @@
 @import '~@reuters-graphics/style-color/scss/all';
 
 $LineChart-container: '#polls-line-chart-container' !default;
+$tickColor: #b0b0b0;
+
+
 
 #{$LineChart-container} {
 
@@ -29,7 +32,7 @@ $LineChart-container: '#polls-line-chart-container' !default;
       font-size: .8rem;
       
       &.fore {
-        fill: $gray-400;
+        fill: $tickColor;
       }
     }
 
@@ -45,7 +48,7 @@ $LineChart-container: '#polls-line-chart-container' !default;
 
     text {
       font-family: $font-family-sans-serif;
-      fill: $gray-400;
+      fill: $tickColor;
       font-size: 0.875rem;
     }
 

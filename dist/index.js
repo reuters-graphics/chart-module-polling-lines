@@ -207,11 +207,11 @@ var MyChartModule = /*#__PURE__*/function () {
 
         return _this2.xScale(dateVal);
       }).y0(function (d, i) {
-        var moe = Math.sqrt(1.3 / sampleSize[i]) * 100;
-        return _this2.yScale(d) + moe;
+        var confInterval = Math.sqrt(1.3 / sampleSize[i]) * 100;
+        return _this2.yScale(d + confInterval); //FIXED TO ADD CI TO VALUE PASSED TO YSCALE
       }).y1(function (d, i) {
-        var moe = Math.sqrt(1.3 / sampleSize[i]) * 100;
-        return _this2.yScale(d) - moe;
+        var confInterval = Math.sqrt(1.3 / sampleSize[i]) * 100;
+        return _this2.yScale(d - confInterval); //FIXED TO ADD CI TO VALUE PASSED TO YSCALE
       });
       var makeVoronoi = d3Voronoi.voronoi().x(function (d, i) {
         var dateVal = _this2.parseDate(d.dateStr);

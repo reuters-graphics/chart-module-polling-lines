@@ -274,7 +274,7 @@
       ]
     },
     "dist/js/index.js": {
-      "bytes": 12481,
+      "bytes": 12605,
       "imports": [
         {
           "path": "_snowpack/pkg/d3.js",
