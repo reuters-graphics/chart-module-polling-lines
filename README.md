@@ -36,6 +36,7 @@ import LineChart from '@reuters-graphics/chart-module-polls-line-chart';
   * Ticks extend full width on small charts only.
   
 `yTicksLong` : (Boolean) Extends y-axis ticks to full width for embed view.
+
 `fixedHeight` : (Integer) Chart height. If not present, height defaults to aspect ratio of 70% of the width.
 
 ### Example usage: 
