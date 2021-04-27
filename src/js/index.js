@@ -130,7 +130,7 @@ class MyChartModule {
       .tickFormat((d) => locale.formatTime('%b %e, %Y')(d));
 
     let yTicks = props.smallChart ? [0, 50, 100] : [0, 25, 50, 75, 100];
-    let yTickSize = props.smallChart ? -width - 20 : -12;
+    let yTickSize = props.smallChart || props.yTicksLong ? -width - 20 : -12;
 
     const yAxis = d3
       .axisLeft(this.yScale)
@@ -206,8 +206,6 @@ class MyChartModule {
         d3.select(e[i]).classed(`d-${dateStr}`, true);
       })
       .classed('active', (d, i) => i === 0 || i === allDates.length - 1);
-
-    let yAxisPos = props.smallChart ? -20 : -20;
 
     plot
       .appendSelect('g.axis.y')

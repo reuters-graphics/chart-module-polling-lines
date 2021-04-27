@@ -40,7 +40,8 @@ Follow the notes below! -->
     }],
     selected: defaultKey,
     locale: 'en',
-    smallChart: true,
+    smallChart: false,
+    yTicksLong: true,
     fixedHeight: 400
     };
 
