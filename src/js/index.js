@@ -190,7 +190,7 @@ class MyChartModule {
     const clipPath = plot
       .appendSelect('clipPath')
       .attr('id', 'clip')
-      .append('rect')
+      .appendSelect('rect')
       .attr('width', width)
       .attr('height', height);
 
