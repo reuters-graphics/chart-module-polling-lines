@@ -1,12 +1,18 @@
 import * as d3 from 'd3';
 
-import { voronoi } from 'd3-voronoi';
+import {
+  voronoi
+} from 'd3-voronoi';
 
-import { appendSelect } from 'd3-appendselect';
+import {
+  appendSelect
+} from 'd3-appendselect';
 import merge from 'lodash/merge';
 import * as utils from './utils';
 import D3Locale from '@reuters-graphics/d3-locale';
-import { polygonLength } from 'd3';
+import {
+  polygonLength
+} from 'd3';
 
 d3.selection.prototype.appendSelect = appendSelect;
 
@@ -80,10 +86,14 @@ class MyChartModule {
       locale.apStyle();
     }
 
-    const { margin } = props;
+    const {
+      margin
+    } = props;
 
     const container = this.selection().node();
-    const { width: containerWidth } = container.getBoundingClientRect(); // Respect the width of your container!
+    const {
+      width: containerWidth
+    } = container.getBoundingClientRect(); // Respect the width of your container!
 
     margin.left = props.smallChart ? 30 : margin.left;
     margin.right = props.smallChart ? 18 : margin.right;
@@ -187,9 +197,11 @@ class MyChartModule {
       .classed('small-chart', props.smallChart)
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    let clipID = `clip-${Date.now()}`;
+
     const clipPath = plot
       .appendSelect('clipPath')
-      .attr('id', 'clip')
+      .attr('id', clipID)
       .appendSelect('rect')
       .attr('width', width)
       .attr('height', height);
@@ -258,7 +270,7 @@ class MyChartModule {
           let lineGroup = enter
             .append('g')
             .attr('class', (d) => `line-group ${utils.slugify(d.id)}`)
-            .attr('clip-path', 'url(#clip)');
+            .attr('clip-path', `url(#${clipID})`);
 
           lineGroup
             .appendSelect('path.moe')
@@ -431,6 +443,7 @@ class MyChartModule {
           .selectAll('.x.axis .tick')
           .classed('active', (d, i) => i === 0 || i === allDates.length - 1);
       });
+
 
     return this; // Generally, always return the chart class from draw!
   }
