@@ -197,8 +197,8 @@ class MyChartModule {
       .classed('small-chart', props.smallChart)
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    let clipID = `clip-${Date.now()}`;
-
+    let clipID = `clip-${utils.slugify(props.selected)}`;
+    
     const clipPath = plot
       .appendSelect('clipPath')
       .attr('id', clipID)
@@ -242,6 +242,7 @@ class MyChartModule {
 
       lbl100.appendSelect('text.fore').text('100%');
     }
+
 
     plot
       .selectAll('g.axis.y .tick')
